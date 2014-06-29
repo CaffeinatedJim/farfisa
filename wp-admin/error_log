@@ -1,0 +1,108 @@
+[07-Jun-2010 19:50:47] PHP Fatal error:  Out of memory (allocated 69992448) (tried to allocate 20176 bytes) in /home/jimbirch/public_html/farfisa.org/wp-admin/includes/image.php on line 162
+[07-Jun-2010 19:56:59] PHP Fatal error:  Out of memory (allocated 69992448) (tried to allocate 20176 bytes) in /home/jimbirch/public_html/farfisa.org/wp-admin/includes/image.php on line 162
+[19-Sep-2011 21:39:09] PHP Warning:  Invalid argument supplied for foreach() in /home/jimbirch/public_html/farfisa.org/wp-content/plugins/simple-facebook-connect/sfc-publish.php on line 290
+[19-Sep-2011 21:39:09] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/jimbirch/public_html/farfisa.org/wp-content/plugins/simple-facebook-connect/sfc-publish.php:290) in /home/jimbirch/public_html/farfisa.org/wp-includes/pluggable.php on line 934
+[19-Sep-2011 21:57:29] PHP Fatal error:  Call to undefined function  use_codepress() in /home/jimbirch/public_html/farfisa.org/wp-content/themes/thesis_17/lib/admin/admin.php on line 42
+[19-Sep-2011 21:57:36] PHP Fatal error:  Call to undefined function  use_codepress() in /home/jimbirch/public_html/farfisa.org/wp-content/themes/thesis_17/lib/admin/admin.php on line 42
+[21-Jan-2013 01:28:46] WordPress database error You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 's Fables - Part 9 - The Crow and the Fox'
+				AND ((`post_status` = 'published')' at line 2 for query SELECT post_title,id FROM wp_posts
+				WHERE post_title = 'Aesop's Fables - Part 9 - The Crow and the Fox'
+				AND ((`post_status` = 'published') OR (`post_status` = 'publish' ) OR (`post_status` = 'draft' ) OR (`post_status` = 'private' )) made by do_action('admin_init'), call_user_func_array, wrp_actions_handler, wrp_do_job, wrp_dojob->__construct, wrp_dojob->processFeed, wrp_dojob->isDuplicate
+[21-Jan-2013 01:28:46] WordPress database error You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 's Fables - Part 8 - The Ants and the Cocoon'
+				AND ((`post_status` = 'publishe' at line 2 for query SELECT post_title,id FROM wp_posts
+				WHERE post_title = 'Aesop's Fables - Part 8 - The Ants and the Cocoon'
+				AND ((`post_status` = 'published') OR (`post_status` = 'publish' ) OR (`post_status` = 'draft' ) OR (`post_status` = 'private' )) made by do_action('admin_init'), call_user_func_array, wrp_actions_handler, wrp_do_job, wrp_dojob->__construct, wrp_dojob->processFeed, wrp_dojob->isDuplicate
+[21-Jan-2013 01:28:46] WordPress database error You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'n'Fold'
+				AND ((`post_status` = 'published') OR (`post_status` = 'publish' ) O' at line 2 for query SELECT post_title,id FROM wp_posts
+				WHERE post_title = 'The Launderettes - Fluff'n'Fold'
+				AND ((`post_status` = 'published') OR (`post_status` = 'publish' ) OR (`post_status` = 'draft' ) OR (`post_status` = 'private' )) made by do_action('admin_init'), call_user_func_array, wrp_actions_handler, wrp_do_job, wrp_dojob->__construct, wrp_dojob->processFeed, wrp_dojob->isDuplicate
+[21-Jan-2013 02:18:44] WordPress database error You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 's Fables - Part 9 - The Crow and the Fox'
+				AND ((`post_status` = 'published')' at line 2 for query SELECT post_title,id FROM wp_posts
+				WHERE post_title = 'Aesop's Fables - Part 9 - The Crow and the Fox'
+				AND ((`post_status` = 'published') OR (`post_status` = 'publish' ) OR (`post_status` = 'draft' ) OR (`post_status` = 'private' )) made by do_action('admin_init'), call_user_func_array, wrp_actions_handler, wrp_do_job, wrp_dojob->__construct, wrp_dojob->processFeed, wrp_dojob->isDuplicate
+[21-Jan-2013 02:18:44] WordPress database error You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 's Fables - Part 8 - The Ants and the Cocoon'
+				AND ((`post_status` = 'publishe' at line 2 for query SELECT post_title,id FROM wp_posts
+				WHERE post_title = 'Aesop's Fables - Part 8 - The Ants and the Cocoon'
+				AND ((`post_status` = 'published') OR (`post_status` = 'publish' ) OR (`post_status` = 'draft' ) OR (`post_status` = 'private' )) made by do_action('admin_init'), call_user_func_array, wrp_actions_handler, wrp_do_job, wrp_dojob->__construct, wrp_dojob->processFeed, wrp_dojob->isDuplicate
+[21-Jan-2013 02:18:44] WordPress database error You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'n'Fold'
+				AND ((`post_status` = 'published') OR (`post_status` = 'publish' ) O' at line 2 for query SELECT post_title,id FROM wp_posts
+				WHERE post_title = 'The Launderettes - Fluff'n'Fold'
+				AND ((`post_status` = 'published') OR (`post_status` = 'publish' ) OR (`post_status` = 'draft' ) OR (`post_status` = 'private' )) made by do_action('admin_init'), call_user_func_array, wrp_actions_handler, wrp_do_job, wrp_dojob->__construct, wrp_dojob->processFeed, wrp_dojob->isDuplicate
+[21-Jan-2013 02:25:17] WordPress database error You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 's Fables - Part 9 - The Crow and the Fox'
+				AND ((`post_status` = 'published')' at line 2 for query SELECT post_title,id FROM wp_posts
+				WHERE post_title = 'Aesop's Fables - Part 9 - The Crow and the Fox'
+				AND ((`post_status` = 'published') OR (`post_status` = 'publish' ) OR (`post_status` = 'draft' ) OR (`post_status` = 'private' )) made by do_action('admin_init'), call_user_func_array, wrp_actions_handler, wrp_do_job, wrp_dojob->__construct, wrp_dojob->processFeed, wrp_dojob->isDuplicate
+[21-Jan-2013 02:25:17] WordPress database error You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 's Fables - Part 8 - The Ants and the Cocoon'
+				AND ((`post_status` = 'publishe' at line 2 for query SELECT post_title,id FROM wp_posts
+				WHERE post_title = 'Aesop's Fables - Part 8 - The Ants and the Cocoon'
+				AND ((`post_status` = 'published') OR (`post_status` = 'publish' ) OR (`post_status` = 'draft' ) OR (`post_status` = 'private' )) made by do_action('admin_init'), call_user_func_array, wrp_actions_handler, wrp_do_job, wrp_dojob->__construct, wrp_dojob->processFeed, wrp_dojob->isDuplicate
+[21-Jan-2013 02:25:17] WordPress database error You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'n'Fold'
+				AND ((`post_status` = 'published') OR (`post_status` = 'publish' ) O' at line 2 for query SELECT post_title,id FROM wp_posts
+				WHERE post_title = 'The Launderettes - Fluff'n'Fold'
+				AND ((`post_status` = 'published') OR (`post_status` = 'publish' ) OR (`post_status` = 'draft' ) OR (`post_status` = 'private' )) made by do_action('admin_init'), call_user_func_array, wrp_actions_handler, wrp_do_job, wrp_dojob->__construct, wrp_dojob->processFeed, wrp_dojob->isDuplicate
+[21-Jan-2013 02:25:17] WordPress database error You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'Mistake (acoustic)'
+				AND ((`post_status` = 'published') OR (`post_status` = '' at line 2 for query SELECT post_title,id FROM wp_posts
+				WHERE post_title = 'Little Fish - Lords' Mistake (acoustic)'
+				AND ((`post_status` = 'published') OR (`post_status` = 'publish' ) OR (`post_status` = 'draft' ) OR (`post_status` = 'private' )) made by do_action('admin_init'), call_user_func_array, wrp_actions_handler, wrp_do_job, wrp_dojob->__construct, wrp_dojob->processFeed, wrp_dojob->isDuplicate
+[21-Jan-2013 02:25:17] WordPress database error You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'FUZZ FARFISA FIESTA'.wmv'
+				AND ((`post_status` = 'published') OR (`post_statu' at line 2 for query SELECT post_title,id FROM wp_posts
+				WHERE post_title = 'THE MOONSTONES-'FUZZ FARFISA FIESTA'.wmv'
+				AND ((`post_status` = 'published') OR (`post_status` = 'publish' ) OR (`post_status` = 'draft' ) OR (`post_status` = 'private' )) made by do_action('admin_init'), call_user_func_array, wrp_actions_handler, wrp_do_job, wrp_dojob->__construct, wrp_dojob->processFeed, wrp_dojob->isDuplicate
+[21-Jan-2013 02:25:17] WordPress database error You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'un autre ete - Tutorial - Left + right - Piano'
+				AND ((`post_status` = 'publi' at line 2 for query SELECT post_title,id FROM wp_posts
+				WHERE post_title = 'Yann Tiersen - Comptine d'un autre ete - Tutorial - Left + right - Piano'
+				AND ((`post_status` = 'published') OR (`post_status` = 'publish' ) OR (`post_status` = 'draft' ) OR (`post_status` = 'private' )) made by do_action('admin_init'), call_user_func_array, wrp_actions_handler, wrp_do_job, wrp_dojob->__construct, wrp_dojob->processFeed, wrp_dojob->isDuplicate
+[21-Jan-2013 02:25:17] WordPress database error You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 's A Wild Weekend'
+				AND ((`post_status` = 'published') OR (`post_status` = 'pu' at line 2 for query SELECT post_title,id FROM wp_posts
+				WHERE post_title = 'NRBQ play It's A Wild Weekend'
+				AND ((`post_status` = 'published') OR (`post_status` = 'publish' ) OR (`post_status` = 'draft' ) OR (`post_status` = 'private' )) made by do_action('admin_init'), call_user_func_array, wrp_actions_handler, wrp_do_job, wrp_dojob->__construct, wrp_dojob->processFeed, wrp_dojob->isDuplicate
+[25-Jan-2013 16:25:05] WordPress database error You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 's Fables - Part 9 - The Crow and the Fox'
+				AND ((`post_status` = 'published')' at line 2 for query SELECT post_title,id FROM wp_posts
+				WHERE post_title = 'Aesop's Fables - Part 9 - The Crow and the Fox'
+				AND ((`post_status` = 'published') OR (`post_status` = 'publish' ) OR (`post_status` = 'draft' ) OR (`post_status` = 'private' )) made by do_action('admin_init'), call_user_func_array, wrp_actions_handler, wrp_do_job, wrp_dojob->__construct, wrp_dojob->processFeed, wrp_dojob->isDuplicate
+[25-Jan-2013 16:25:05] WordPress database error You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'n'Fold'
+				AND ((`post_status` = 'published') OR (`post_status` = 'publish' ) O' at line 2 for query SELECT post_title,id FROM wp_posts
+				WHERE post_title = 'The Launderettes - Fluff'n'Fold'
+				AND ((`post_status` = 'published') OR (`post_status` = 'publish' ) OR (`post_status` = 'draft' ) OR (`post_status` = 'private' )) made by do_action('admin_init'), call_user_func_array, wrp_actions_handler, wrp_do_job, wrp_dojob->__construct, wrp_dojob->processFeed, wrp_dojob->isDuplicate
+[24-Feb-2013 18:10:18] WordPress database error You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 's Fables - Part 9 - The Crow and the Fox'
+				AND ((`post_status` = 'published')' at line 2 for query SELECT post_title,id FROM wp_posts
+				WHERE post_title = 'Aesop's Fables - Part 9 - The Crow and the Fox'
+				AND ((`post_status` = 'published') OR (`post_status` = 'publish' ) OR (`post_status` = 'draft' ) OR (`post_status` = 'private' )) made by do_action('admin_init'), call_user_func_array, wrp_actions_handler, wrp_do_job, wrp_dojob->__construct, wrp_dojob->processFeed, wrp_dojob->isDuplicate
+[24-Feb-2013 18:10:18] WordPress database error You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'n'Fold'
+				AND ((`post_status` = 'published') OR (`post_status` = 'publish' ) O' at line 2 for query SELECT post_title,id FROM wp_posts
+				WHERE post_title = 'The Launderettes - Fluff'n'Fold'
+				AND ((`post_status` = 'published') OR (`post_status` = 'publish' ) OR (`post_status` = 'draft' ) OR (`post_status` = 'private' )) made by do_action('admin_init'), call_user_func_array, wrp_actions_handler, wrp_do_job, wrp_dojob->__construct, wrp_dojob->processFeed, wrp_dojob->isDuplicate
+[24-Feb-2013 18:15:29] WordPress database error You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'FUZZ FARFISA FIESTA'.wmv'
+				AND ((`post_status` = 'published') OR (`post_statu' at line 2 for query SELECT post_title,id FROM wp_posts
+				WHERE post_title = 'THE MOONSTONES-'FUZZ FARFISA FIESTA'.wmv'
+				AND ((`post_status` = 'published') OR (`post_status` = 'publish' ) OR (`post_status` = 'draft' ) OR (`post_status` = 'private' )) made by do_action('admin_init'), call_user_func_array, wrp_actions_handler, wrp_do_job, wrp_dojob->__construct, wrp_dojob->processFeed, wrp_dojob->isDuplicate
+[24-Feb-2013 18:24:11] WordPress database error You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 't Worry, Be Happy Cover'
+				AND ((`post_status` = 'published') OR (`post_status' at line 2 for query SELECT post_title,id FROM wp_posts
+				WHERE post_title = 'Bobby McFerrin - Don't Worry, Be Happy Cover'
+				AND ((`post_status` = 'published') OR (`post_status` = 'publish' ) OR (`post_status` = 'draft' ) OR (`post_status` = 'private' )) made by do_action('admin_init'), call_user_func_array, wrp_actions_handler, wrp_do_job, wrp_dojob->__construct, wrp_dojob->processFeed, wrp_dojob->isDuplicate
+[24-Feb-2013 18:24:12] WordPress database error You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'Hippie - Mystic Phil (2013)'
+				AND ((`post_status` = 'published') OR (`post_st' at line 2 for query SELECT post_title,id FROM wp_posts
+				WHERE post_title = 'High Rollin' Hippie - Mystic Phil (2013)'
+				AND ((`post_status` = 'published') OR (`post_status` = 'publish' ) OR (`post_status` = 'draft' ) OR (`post_status` = 'private' )) made by do_action('admin_init'), call_user_func_array, wrp_actions_handler, wrp_do_job, wrp_dojob->__construct, wrp_dojob->processFeed, wrp_dojob->isDuplicate
+[24-Feb-2013 18:24:12] WordPress database error You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 't tear us apart'
+				AND ((`post_status` = 'published') OR (`post_status` = 'pub' at line 2 for query SELECT post_title,id FROM wp_posts
+				WHERE post_title = 'Giangrande - Love won't tear us apart'
+				AND ((`post_status` = 'published') OR (`post_status` = 'publish' ) OR (`post_status` = 'draft' ) OR (`post_status` = 'private' )) made by do_action('admin_init'), call_user_func_array, wrp_actions_handler, wrp_do_job, wrp_dojob->__construct, wrp_dojob->processFeed, wrp_dojob->isDuplicate
+[06-Mar-2013 03:07:17] WordPress database error You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'italiano (Toto Cotugno Cover)'
+				AND ((`post_status` = 'published') OR (`post_' at line 2 for query SELECT post_title,id FROM wp_posts
+				WHERE post_title = 'Ronha - L'italiano (Toto Cotugno Cover)'
+				AND ((`post_status` = 'published') OR (`post_status` = 'publish' ) OR (`post_status` = 'draft' ) OR (`post_status` = 'private' )) made by do_action('admin_init'), call_user_func_array, wrp_actions_handler, wrp_do_job, wrp_dojob->__construct, wrp_dojob->processFeed, wrp_dojob->isDuplicate
+[06-Mar-2013 03:07:17] WordPress database error You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'existais pas (Joe Dassin Cover)'
+				AND ((`post_status` = 'published') OR (`pos' at line 2 for query SELECT post_title,id FROM wp_posts
+				WHERE post_title = 'Ronha - Et si tu n'existais pas (Joe Dassin Cover)'
+				AND ((`post_status` = 'published') OR (`post_status` = 'publish' ) OR (`post_status` = 'draft' ) OR (`post_status` = 'private' )) made by do_action('admin_init'), call_user_func_array, wrp_actions_handler, wrp_do_job, wrp_dojob->__construct, wrp_dojob->processFeed, wrp_dojob->isDuplicate
+[06-Mar-2013 03:07:17] WordPress database error You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'S STYLE)'
+				AND ((`post_status` = 'published') OR (`post_status` = 'publish' )' at line 2 for query SELECT post_title,id FROM wp_posts
+				WHERE post_title = 'The Glendoras - By your tail (GARAGE ROCKER 60'S STYLE)'
+				AND ((`post_status` = 'published') OR (`post_status` = 'publish' ) OR (`post_status` = 'draft' ) OR (`post_status` = 'private' )) made by do_action('admin_init'), call_user_func_array, wrp_actions_handler, wrp_do_job, wrp_dojob->__construct, wrp_dojob->processFeed, wrp_dojob->isDuplicate
+[07-May-2013 14:42:59] WordPress database error You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 's and Snake - Farfisa'
+				AND ((`post_status` = 'published') OR (`post_status` ' at line 2 for query SELECT post_title,id FROM wp_posts
+				WHERE post_title = 'Gino's and Snake - Farfisa'
+				AND ((`post_status` = 'published') OR (`post_status` = 'publish' ) OR (`post_status` = 'draft' ) OR (`post_status` = 'private' )) made by do_action('admin_init'), call_user_func_array, wrp_actions_handler, wrp_do_job, wrp_dojob->__construct, wrp_dojob->processFeed, wrp_dojob->isDuplicate
+[28-Jun-2014 03:38:37] PHP Parse error:  syntax error, unexpected T_STRING in /home3/jimbirch/public_html/farfisa.org/wp-content/plugins/fancy-gallery/plugin.php on line 25
+[28-Jun-2014 03:38:37] PHP Parse error:  syntax error, unexpected T_STRING in /home3/jimbirch/public_html/farfisa.org/wp-content/plugins/fancy-gallery/plugin.php on line 25
