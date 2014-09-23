@@ -1,0 +1,22 @@
+/*
+ Theme Name:   Bootstrap Basic Child
+ Theme URI:    
+ Description:  Bootstrap Basic Child Theme for Farfisa.org
+ Author:       Jim Birch
+ Author URI:   http://www.farfisa.org
+ Template:     bootstrap-basic
+ Version:      1.0.0
+ Tags:         
+ Text Domain:  bootstrap-basic-child
+*/
+
+@import url("../bootstrap-basic/style.css");
+@import url("bootstrap-readable.min.css");
+
+/* =Theme customization starts here
+-------------------------------------------------------------- */
+
+.category-ebay td img {
+	margin-right: 20px;
+	margin-bottom: 20px;
+}
