@@ -97,6 +97,8 @@ class UpdraftPlus_Options {
 		register_setting('updraft-options-group', 'updraft_interval_increments');
 		register_setting('updraft-options-group', 'updraft_retain', array($updraftplus, 'retain_range') );
 		register_setting('updraft-options-group', 'updraft_retain_db', array($updraftplus, 'retain_range') );
+		register_setting('updraft-options-group', 'updraft_retain_extrarules' );
+
 		register_setting('updraft-options-group', 'updraft_encryptionphrase');
 		register_setting('updraft-options-group', 'updraft_service', array($updraftplus, 'just_one'));
 
@@ -111,6 +113,8 @@ class UpdraftPlus_Options {
 		register_setting('updraft-options-group', 'updraft_dropbox', array($updraftplus, 'dropbox_checkchange'));
 		register_setting('updraft-options-group', 'updraft_googledrive', array($updraftplus, 'googledrive_checkchange'));
 		register_setting('updraft-options-group', 'updraft_onedrive', array($updraftplus, 'onedrive_checkchange'));
+		register_setting('updraft-options-group', 'updraft_azure', array($updraftplus, 'azure_checkchange'));
+		register_setting('updraft-options-group', 'updraft_googlecloud', array($updraftplus, 'googlecloud_checkchange'));
 
 		register_setting('updraft-options-group', 'updraft_sftp_settings');
 		register_setting('updraft-options-group', 'updraft_webdav_settings', array($updraftplus, 'replace_http_with_webdav'));
@@ -148,8 +152,8 @@ class UpdraftPlus_Options {
 		register_setting('updraft-options-group', 'updraft_starttime_files', array('UpdraftPlus_Options', 'hourminute') );
 		register_setting('updraft-options-group', 'updraft_starttime_db', array('UpdraftPlus_Options', 'hourminute') );
 
-		register_setting('updraft-options-group', 'updraft_startday_files', array('UpdraftPlus_Options', 'weekday') );
-		register_setting('updraft-options-group', 'updraft_startday_db', array('UpdraftPlus_Options', 'weekday') );
+		register_setting('updraft-options-group', 'updraft_startday_files', array('UpdraftPlus_Options', 'week_or_month_day') );
+		register_setting('updraft-options-group', 'updraft_startday_db', array('UpdraftPlus_Options', 'week_or_month_day') );
 
 		global $pagenow;
 		if (is_multisite() && $pagenow == 'options-general.php' && isset($_REQUEST['page']) && 'updraftplus' == substr($_REQUEST['page'], 0, 11)) {
@@ -163,14 +167,14 @@ class UpdraftPlus_Options {
 		return '00:00';
 	}
 
-	public static function weekday($pot) {
+	public static function week_or_month_day($pot) {
 		$pot = absint($pot);
-		return ($pot>6) ? 0 : $pot;
+		return ($pot>28) ? 1 : $pot;
 	}
 
 	public static function show_admin_warning_multisite() {
 		global $updraftplus_admin;
-		$updraftplus_admin->show_admin_warning('<strong>'.__('UpdraftPlus warning:', 'updraftplus').'</strong> '.__('This is a WordPress multi-site (a.k.a. network) installation.', 'updraftplus').' <a href="http://updraftplus.com">'.__('WordPress Multisite is supported, with extra features, by UpdraftPlus Premium, or the Multisite add-on.', 'updraftplus').'</a> '.__('Without upgrading, UpdraftPlus allows <strong>every</strong> blog admin who can modify plugin settings to back up (and hence access the data, including passwords, from) and restore (including with customised modifications, e.g. changed passwords) <strong>the entire network</strong>.', 'updraftplus').' '.__('(This applies to all WordPress backup plugins unless they have been explicitly coded for multisite compatibility).', 'updraftplus'), 'error');
+		$updraftplus_admin->show_admin_warning('<strong>'.__('UpdraftPlus warning:', 'updraftplus').'</strong> '.__('This is a WordPress multi-site (a.k.a. network) installation.', 'updraftplus').' <a href="https://updraftplus.com/shop/">'.__('WordPress Multisite is supported, with extra features, by UpdraftPlus Premium, or the Multisite add-on.', 'updraftplus').'</a> '.__('Without upgrading, UpdraftPlus allows <strong>every</strong> blog admin who can modify plugin settings to back up (and hence access the data, including passwords, from) and restore (including with customised modifications, e.g. changed passwords) <strong>the entire network</strong>.', 'updraftplus').' '.__('(This applies to all WordPress backup plugins unless they have been explicitly coded for multisite compatibility).', 'updraftplus'), 'error');
 	}
 
 }
