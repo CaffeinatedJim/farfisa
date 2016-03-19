@@ -3,3 +3,5 @@ nbproject/
 wp-config.php
 dploy.yaml
 /uploads/
+wp-content/uploads/
+wp-content/updraft/*
