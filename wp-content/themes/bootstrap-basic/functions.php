@@ -14,6 +14,19 @@ if (!isset($content_width)) {
 }
 
 
+/**
+ * The Bootstrap Basic main class.
+ */
+require_once get_template_directory() . '/inc/BootstrapBasic.php';
+
+
+/**
+ * Register commonly use scripts and styles.
+ */
+$BootstrapBasic = new \BootstrapBasic();
+unset($BootstrapBasic);
+
+
 if (!function_exists('bootstrapBasicSetup')) {
     /**
      * Setup theme and register support wp features.
@@ -60,6 +73,20 @@ if (!function_exists('bootstrapBasicSetup')) {
                 )
             )
         );
+
+        // @since 1.1 or WordPress 5.0+
+        // make gutenberg support. --------------------------------------------------------------------------------------
+        // @link https://wordpress.org/gutenberg/handbook/extensibility/theme-support/ reference.
+        // add wide alignment ( https://wordpress.org/gutenberg/handbook/designers-developers/developers/themes/theme-support/#wide-alignment )
+        add_theme_support('align-wide');
+        // support default block styles for front-end ( https://wordpress.org/gutenberg/handbook/designers-developers/developers/themes/theme-support/#default-block-styles )
+        add_theme_support('wp-block-styles');
+        // support editor styles ( https://wordpress.org/gutenberg/handbook/designers-developers/developers/themes/theme-support/#editor-styles )
+        // this one make appearance in editor more close to Bootstrap 3.
+        add_theme_support('editor-styles');
+        // support responsive embeds for front-end ( https://wordpress.org/gutenberg/handbook/designers-developers/developers/themes/theme-support/#responsive-embedded-content )
+        add_theme_support('responsive-embeds');
+        // end make gutenberg support. ---------------------------------------------------------------------------------
     }// bootstrapBasicSetup
 }
 add_action('after_setup_theme', 'bootstrapBasicSetup');
@@ -133,17 +160,19 @@ add_action('widgets_init', 'bootstrapBasicWidgetsInit');
 if (!function_exists('bootstrapBasicEnqueueScripts')) {
     /**
      * Enqueue scripts & styles
+     * 
+     * @global \WP_Scripts $wp_scripts
      */
     function bootstrapBasicEnqueueScripts() 
     {
         global $wp_scripts;
 
-        wp_enqueue_style('bootstrap-style', get_template_directory_uri() . '/css/bootstrap.min.css', array(), '3.3.7');
-        wp_enqueue_style('bootstrap-theme-style', get_template_directory_uri() . '/css/bootstrap-theme.min.css', array(), '3.3.7');
+        wp_enqueue_style('bootstrap-style');
+        wp_enqueue_style('bootstrap-theme-style', get_template_directory_uri() . '/css/bootstrap-theme.min.css', array(), '3.4.0');
         wp_enqueue_style('fontawesome-style', get_template_directory_uri() . '/css/font-awesome.min.css', array(), '4.7.0');
         wp_enqueue_style('main-style', get_template_directory_uri() . '/css/main.css');
 
-        wp_enqueue_script('modernizr-script', get_template_directory_uri() . '/js/vendor/modernizr.min.js', array(), '3.3.1');
+        wp_enqueue_script('modernizr-script', get_template_directory_uri() . '/js/vendor/modernizr.min.js', array(), '3.6.0');
         wp_register_script('respond-script', get_template_directory_uri() . '/js/vendor/respond.min.js', array(), '1.4.2');
         $wp_scripts->add_data('respond-script', 'conditional', 'lt IE 9');
         wp_enqueue_script('respond-script');
@@ -151,7 +180,7 @@ if (!function_exists('bootstrapBasicEnqueueScripts')) {
         $wp_scripts->add_data('html5-shiv-script', 'conditional', 'lte IE 9');
         wp_enqueue_script('html5-shiv-script');
         wp_enqueue_script('jquery');
-        wp_enqueue_script('bootstrap-script', get_template_directory_uri() . '/js/vendor/bootstrap.min.js', array(), '3.3.7', true);
+        wp_enqueue_script('bootstrap-script');
         wp_enqueue_script('main-script', get_template_directory_uri() . '/js/main.js', array(), false, true);
         wp_enqueue_style('bootstrap-basic-style', get_stylesheet_uri());
     }// bootstrapBasicEnqueueScripts
@@ -168,6 +197,14 @@ if (is_admin()) {
     add_action('admin_menu', array($bbsc_adminhelp, 'themeHelpMenu'));
     unset($bbsc_adminhelp);
 }
+
+
+/**
+ * Make WordPress 5 (Gutenberg) editor support Bootstrap CSS.
+ */
+require_once get_template_directory() . '/inc/BootstrapBasicWp5.php';
+$BbWp5 = new BootstrapBasicWp5();
+unset($BbWp5);
 
 
 /**
