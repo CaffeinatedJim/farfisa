@@ -1,9 +1,0 @@
-0000.000 (0) Opened log file at time: Mon, 18 May 2015 03:04:43 +0000 on http://farfisa.org
-0000.001 (0) UpdraftPlus WordPress backup plugin (http://updraftplus.com): 1.10.1 WP: 4.2.2 PHP: 5.4.38 (Linux gator4135.hostgator.com 3.12.35.1418868451 #1 SMP Wed Dec 17 20:10:32 CST 2014 x86_64) MySQL: 5.5.42-37.1 Server: Apache safe_mode: 0 max_execution_time: 900 memory_limit: 256M (used: 22.1M | 26.3M) multisite: N mcrypt: Y LANG:  ZipArchive::addFile: Y
-0000.167 (0) Free space on disk containing Updraft's temporary directory: 280185.8 Mb / Free disk space in account: 969315.8 Mb (3.1 % used)
-0000.170 (0) Tasks: Backup files:  (schedule: daily) Backup DB: 1 (schedule: daily)
-0000.170 (0) Processed schedules. Tasks now: Backup files:  Backup DB: 
-0000.173 (0) Decremented the semaphore (fd) by 1
-0000.173 (0) Semaphore (fd) still locked
-0000.174 (0) No email will be sent - this backup set was empty.
-0000.174 (0) The backup apparently succeeded and is now complete

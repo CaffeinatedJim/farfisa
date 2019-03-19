@@ -345,13 +345,19 @@ function schema_wp_get_media( $post_id = null) {
 			
 			if ( $post->post_content ) {
 				$Document = new DOMDocument();
+				// @since 1.7.5
+				libxml_use_internal_errors(true);
+				// load the html into the object
 				@$Document->loadHTML( $post->post_content );
+				// @since 1.7.5
+				libxml_clear_errors();
 				$DocumentImages = $Document->getElementsByTagName( 'img' );
 
 				if ( $DocumentImages->length ) {
 					$image_url 		= $DocumentImages->item( 0 )->getAttribute( 'src' );
 					$image_width 	= ( $DocumentImages->item( 0 )->getAttribute( 'width' ) > 696 ) ? $DocumentImages->item( 0 )->getAttribute( 'width' ) : 696;
 					$image_height	= $DocumentImages->item( 0 )->getAttribute( 'height' );
+				
 				}
 			}
 		}
@@ -890,11 +896,12 @@ function schema_wp_is_blog() {
  * @since 1.7.1
  * @return string
  */
-function schema_wp_get_truncate_to_word( $value, $limit = 110, $end = '...' ) {
+function schema_wp_get_truncate_to_word( $string, $limit = 110, $end = '...' ) {
 	
-	$limit 		= apply_filters( 'schema_wp_truncate_to_word_limit', $limit );
-	$limit 		= $limit - mb_strlen($end); // Take into account $end string into the limit
-    $valuelen 	= mb_strlen($value);
-    
-	return $limit < $valuelen ? mb_substr($value, 0, mb_strrpos($value, ' ', $limit - $valuelen)) . $end : $value;	
+	$limit 	= apply_filters( 'schema_wp_truncate_to_word_limit', $limit );
+	$limit 	= $limit - strlen($end); // Take into account $end string into the limit
+	$string = substr($string, 0, $limit);
+	$string = substr($string, 0, strrpos($string, ' ')) . $end;
+	
+	return $string;
 }
