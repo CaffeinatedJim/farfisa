@@ -3,8 +3,8 @@ Contributors: hishaman, schemapress
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=NGVUBT2QXN7YL
 Tags: schema, schema.org, json, json-ld, default image, image, images, featured image, google, seo, structured data, markup, search engine, search, post, page, plugin, extensions
 Requires at least: 4.0
-Tested up to: 4.6.1
-Stable tag: 1.0
+Tested up to: 5.5.1
+Stable tag: 1.2
 
 Add ability to set a default Featured image for schema.org markup, an extension for the Schema plugin.
 
@@ -12,11 +12,17 @@ Add ability to set a default Featured image for schema.org markup, an extension 
 
 Like Schema Default Image extension? Consider leaving a [5 star review](https://wordpress.org/support/plugin/schema-default-image/reviews/).
 
-Schema Default Image is an extension for the Schema plugin, it extend Schema functionality by adding ability to set a default Featured image, which will be used if no Featured image is attached to post.
+Schema Default Image is an extension for the Schema plugin, it extend Schema functionality by adding ability to set a default image, which will be used in schema.org markup output if no Featured image is attached to the post.
 
-This extension require [Schema plugin](https://wordpress.org/plugins/schema/) to be installed and activated on your site.
+Note: This extension requires [Schema plugin](https://wordpress.org/plugins/schema/) to be installed and activated on your site.
 
-Check out the [Schema Plugin](http://schema.press/) page for more info and [documentation](http://schema.press/docs/).
+Google requires every [Article](https://schema.press/docs-premium/add-schema-article/) and [BlogPost](https://schema.press/docs-premium/add-schema-org-markup-blogposting/) to have an image property within its schema.org markup, otherwise you will get an error in Rich Results testing tool and Search Console.
+
+Also, Google recommends uploading a high quality image, it shouldn't be smaller than the [recommended image size](https://schema.press/docs-premium/image-size-smaller-than-recommended-size/).
+
+Check out the [Schema Free Plugin](https://schema.press/downloads/schema/) page for more info and [documentation](https://schema.press/docs/default-image/).
+
+Looking for more features? Check out the Premium [Schema Plugin](https://schema.press/downloads/schema-premium/).
 
 == Installation ==
 
@@ -30,13 +36,21 @@ Check out the [Schema Plugin](http://schema.press/) page for more info and [docu
 
 = The plugin isn't working or have a bug? =
 
-Post detailed information about the issue in the [support forum](http://wordpress.org/support/plugin/schema-default-image) and we will work to fix it.
+Post detailed information about the issue in the [support forum](https://wordpress.org/support/plugin/schema-default-image) and we will work to fix it.
 
 
 == Screenshots ==
 1. Set default image in the Schema > Types edit screen.
 
 == Changelog ==
+
+= 1.2 =
+* Update: Pumped tested WordPress version to 5.5.1 release.
+* Update: Modified readme.txt file.
+
+= 1.1 =
+* Update: Pumped tested WordPress version to 5.4.1 release.
+* Update: Modified readme.txt file.
 
 = 1.0 =
 * Initial Release

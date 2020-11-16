@@ -1,11 +1,11 @@
 <?php
 /**
  * Plugin Name: Schema Default Image
- * Plugin URI: http://schema.press
+ * Plugin URI: https://schema.press
  * Description: Add ability to set a default Featured image for schema.org markup, an extension for the Schema plugin.
  * Author: Hesham
  * Author URI: http://zebida.com
- * Version: 1.0
+ * Version: 1.2
  * Text Domain: schema-wp-default-image
  * Domain Path: languages
  *
