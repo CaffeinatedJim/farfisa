@@ -2,7 +2,7 @@
 /**
  * Facebook embeds
  *
- * @package Jetpack
+ * @package automattic/jetpack
  */
 
 define( 'JETPACK_FACEBOOK_EMBED_REGEX', '#^https?://(www.)?facebook\.com/([^/]+)/(posts|photos)/([^/]+)?#' );
@@ -11,7 +11,6 @@ define( 'JETPACK_FACEBOOK_PHOTO_EMBED_REGEX', '#^https?://(www.)?facebook\.com/p
 define( 'JETPACK_FACEBOOK_PHOTO_ALTERNATE_EMBED_REGEX', '#^https?://(www.)?facebook\.com/([^/]+)/photos/([^/]+)?#' );
 define( 'JETPACK_FACEBOOK_VIDEO_EMBED_REGEX', '#^https?://(www.)?facebook\.com/(?:video.php|watch\/?)\?([^\s]+)#' );
 define( 'JETPACK_FACEBOOK_VIDEO_ALTERNATE_EMBED_REGEX', '#^https?://(www.)?facebook\.com/([^/]+)/videos/([^/]+)?#' );
-
 
 /*
  * Example URL: https://www.facebook.com/VenusWilliams/posts/10151647007373076
@@ -66,7 +65,7 @@ function jetpack_facebook_embed_handler( $matches, $attr, $url ) {
 		$width = 552; // As of 01/2017, the default width of Facebook embeds when no width attribute provided.
 
 		global $content_width;
-		if ( isset( $content_width ) ) {
+		if ( is_numeric( $content_width ) && $content_width > 0 ) {
 			$width = min( $width, $content_width );
 		}
 

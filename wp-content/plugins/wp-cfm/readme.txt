@@ -1,11 +1,11 @@
 === WP-CFM ===
-Contributors: mgibbs189, elvismdev, mickaelperrin, alfreddatakillen, joshlevinson, jmslbam
+Contributors: mgibbs189, elvismdev, mickaelperrin, alfreddatakillen, joshlevinson, jmslbam, gbeezus
 Tags: configuration, settings, configuration management, features, drupal, wordpress, wp-cli
 Donate link: http://forumone.com/
 Requires at least: 4.7
-Tested up to: 5.2
+Tested up to: 6.0.2
 Requires PHP: 5.6
-Stable tag: 1.6
+Stable tag: 1.7.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -66,6 +66,24 @@ See the filters reference page at the [GitHub Wiki](https://github.com/forumone/
 3. Diff viewer to track changes within a bundle
 
 == Changelog ==
+
+= 1.7.5 =
+* Fix: Tested with latest WordPress release v6.0.2. Removing the plugin outdated notice at WordPress.org plugin repository.
+
+= 1.7.4 =
+* Fix: Pantheon Quick Silver hooks silently failing to pull updated configuration.
+
+= 1.7.3 =
+* Fix: PHP notice "WP_Scripts::localize was called incorrectly". The $l10n parameter must be an array.
+
+= 1.7.2 =
+* Improved: Fix Warning invalid argument supplied on CLI command.
+
+= 1.7.1 =
+* Improved: Cache results of WPCFM_Registry::get_configuration_items() (props @fariasf).
+* New: Added `--format` parameter for the bundles command to retrieve bundle information from the CLI (props @gilzow).
+* Improved: Use `home_url()` instead of `WP_HOME` since this one isn't always guaranteed to be set (props @kyletaylored).
+* Fix: Warning invalid argument supplied for foreach() on CLI command (props @adnoh).
 
 = 1.6 =
 * Improved: Following WordPress best practices. Including CSS and JS scripts for plugin admin page using `admin_enqueue_scripts` action.

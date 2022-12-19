@@ -11,7 +11,22 @@
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) exit;
-
+add_filter( 'schema_wp_types', 'schema_wp_new_add_schema_type_7623456' );
+/**
+ * Add New type to Schema Types options
+ *
+ * @since 1.0
+ */
+function schema_wp_new_add_schema_type_7623456( $options ) {
+	
+	// Change 'NewType' to the actual schema.org type you want to add
+	// Example: Event, Product, JobPosting, ...etc.
+	$options['NewType'] =  array ( 
+						'label' => __('NewType'),
+						'value'	=> 'NewType'
+						);	
+	return $options;
+}
 /**
  * Check if post type is enabled
  *
@@ -957,9 +972,25 @@ function schema_wp_is_blog() {
 function schema_wp_get_truncate_to_word( $string, $limit = 110, $end = '...' ) {
 	
 	$limit 	= apply_filters( 'schema_wp_truncate_to_word_limit', $limit );
-	$limit 	= $limit - strlen($end); // Take into account $end string into the limit
-	$string = substr($string, 0, $limit);
-	$string = substr($string, 0, strrpos($string, ' ')) . $end;
-	
-	return $string;
+
+	if (strlen($string) > $limit || $string == '') {
+		$words = preg_split('/\s/', $string);      
+		$output = '';
+		$i      = 0;
+		while (1) {
+			$length = strlen($output)+strlen($words[$i]);
+			if ($length > $limit) {
+				break;
+			} 
+			else {
+				$output .= " " . $words[$i];
+				++$i;
+			}
+		}
+		$output .= $end;
+	} 
+	else {
+		$output = $string;
+	}
+	return $output;
 }

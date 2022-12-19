@@ -17,8 +17,12 @@ if (!function_exists('bootstrapBasicCommentReplyLinkClass')) {
      */
     function bootstrapBasicCommentReplyLinkClass($class) 
     {
+        if (!is_scalar($class)) {
+            $class = '';
+        }
+
         $class = str_replace("class='comment-reply-link", "class='comment-reply-link btn btn-default btn-sm", $class);
-        $class = str_replace("class=\"comment-reply-login", "class=\"comment-reply-login btn btn-default btn-sm", $class);
+        $class = str_replace('class="comment-reply-login', 'class="comment-reply-login btn btn-default btn-sm', $class);
 
         return $class;
     }// bootstrapBasicCommentReplyLinkClass
@@ -27,6 +31,12 @@ add_filter('comment_reply_link', 'bootstrapBasicCommentReplyLinkClass');
 
 
 if (!function_exists('bootstrapBasicExcerptMore')) {
+    /**
+     * Get excerpt more characters.
+     * 
+     * @param string $more
+     * @return string Return `&hellip;`.
+     */
     function bootstrapBasicExcerptMore($more) 
     {
         return ' &hellip;';
@@ -44,6 +54,10 @@ if (!function_exists('bootstrapBasicImageSendToEditor')) {
      */
     function bootstrapBasicImageSendToEditor($html, $id) 
     {
+        if (!is_scalar($html)) {
+            $html = '';
+        }
+
         if ($id > 0) {
             $html = str_replace('rel="attachment wp-att-'.$id.'"', '', $html);
         }
@@ -64,6 +78,10 @@ if (!function_exists('bootstrapBasicLinkPagesLink')) {
      */
     function bootstrapBasicLinkPagesLink($link, $i) 
     {
+        if (!is_scalar($link)) {
+            $link = '';
+        }
+
         if (strpos($link, '<a') === false) {
             return '<li class="active"><a href="#">' . $link . '</a></li>';
         } else {
@@ -87,7 +105,7 @@ if (!function_exists('bootstrapBasicNavMenuCssClass')) {
             return $classes;
         }
 
-        if(in_array('current-menu-item', $menu_item->classes)){
+        if (in_array('current-menu-item', $menu_item->classes)) {
             $classes[] = 'active';
         }
 
@@ -147,7 +165,7 @@ add_filter('wp_title', 'bootstrapBasicWpTitle', 10, 2);
 if (!function_exists('bootstrapBasicWpTitleSeparator')) {
     /**
      * Replace title separator from its original (-) to the new one (|).<br>
-     * The old wp_title() has been deprecated. For more info please read at the link below
+     * The old function `wp_title` has been deprecated. For more info please read at the link below
      * 
      * @link https://developer.wordpress.org/reference/hooks/document_title_separator/ Document.
      */

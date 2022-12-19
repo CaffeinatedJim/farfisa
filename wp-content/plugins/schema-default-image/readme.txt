@@ -3,8 +3,8 @@ Contributors: hishaman, schemapress
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=NGVUBT2QXN7YL
 Tags: schema, schema.org, json, json-ld, default image, image, images, featured image, google, seo, structured data, markup, search engine, search, post, page, plugin, extensions
 Requires at least: 4.0
-Tested up to: 5.5.1
-Stable tag: 1.2
+Tested up to: 6.0.1
+Stable tag: 1.2.2
 
 Add ability to set a default Featured image for schema.org markup, an extension for the Schema plugin.
 
@@ -43,6 +43,12 @@ Post detailed information about the issue in the [support forum](https://wordpre
 1. Set default image in the Schema > Types edit screen.
 
 == Changelog ==
+
+= 1.2.2 =
+* Update: Pumped tested WordPress version to 6.0.1 release.
+
+= 1.2.1 =
+* Update: Pumped tested WordPress version to 5.5.1 release.
 
 = 1.2 =
 * Update: Pumped tested WordPress version to 5.5.1 release.
