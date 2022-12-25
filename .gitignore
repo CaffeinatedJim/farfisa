@@ -5,3 +5,5 @@ dploy.yaml
 /uploads/
 wp-content/uploads/
 wp-content/updraft/*
+*.sql
+*.sql.zip
