@@ -2885,13 +2885,14 @@ class AMP_Validation_Error_Taxonomy {
 		}
 
 		// Even if the user didn't select any errors to bulk edit, redirect back to the same page.
-		wp_safe_redirect(
+		if ( wp_safe_redirect(
 			add_query_arg(
 				$redirect_query_args,
 				get_edit_post_link( $post_id, 'raw' )
 			)
-		);
-		exit();
+		) ) {
+			exit(); // @codeCoverageIgnore
+		}
 	}
 
 	/**
@@ -2917,7 +2918,7 @@ class AMP_Validation_Error_Taxonomy {
 
 		$updated_count = 0;
 		foreach ( $term_ids as $term_id ) {
-			if ( 'delete' === $action && self::delete_empty_term( $term_id ) ) {
+			if ( self::delete_empty_term( $term_id ) ) {
 				$updated_count++;
 			}
 		}
@@ -2927,7 +2928,7 @@ class AMP_Validation_Error_Taxonomy {
 		}
 
 		$term_ids_count = count( $term_ids );
-		if ( 'edit.php' === $pagenow && 'delete' === $action && 1 === $updated_count ) {
+		if ( 'edit.php' === $pagenow && 1 === $updated_count ) {
 			// Redirect to error index screen if deleting an validation error with no associated validated URLs.
 			$redirect_to = add_query_arg(
 				[
@@ -3302,7 +3303,9 @@ class AMP_Validation_Error_Taxonomy {
 					return sprintf(
 						/* translators: %1$s is the invalid attribute value, %2$s is the attribute name */
 						esc_html__( 'Invalid value %1$s for attribute %2$s', 'amp' ),
-						'<code>' . esc_html( $validation_error['node_attributes'][ $validation_error['attribute'] ] ) . '</code>',
+						empty( $validation_error['node_attributes'][ $validation_error['attribute'] ] )
+							? esc_html__( '(empty)', 'amp' )
+							: '<code>' . esc_html( $validation_error['node_attributes'][ $validation_error['attribute'] ] ) . '</code>',
 						'<code>' . esc_html( $validation_error['attribute'] ) . '</code>'
 					);
 				} else {

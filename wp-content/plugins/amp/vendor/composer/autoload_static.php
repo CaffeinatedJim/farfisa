@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit1005b300fac3b9e59da88de2e4021bbc
+class ComposerStaticInitb01de5a5e4a9a5142429384727b3cb65
 {
     public static $files = array (
         '356506e5d3d2f49e680971cd925046fa' => __DIR__ . '/..' . '/ampproject/amp-toolbox/include/compatibility-fixes.php',
@@ -75,6 +75,7 @@ class ComposerStaticInit1005b300fac3b9e59da88de2e4021bbc
         'AMP_Embed_Sanitizer' => __DIR__ . '/../..' . '/includes/sanitizers/class-amp-embed-sanitizer.php',
         'AMP_Facebook_Embed_Handler' => __DIR__ . '/../..' . '/includes/embeds/class-amp-facebook-embed-handler.php',
         'AMP_Form_Sanitizer' => __DIR__ . '/../..' . '/includes/sanitizers/class-amp-form-sanitizer.php',
+        'AMP_GTag_Script_Sanitizer' => __DIR__ . '/../..' . '/includes/sanitizers/class-amp-gtag-script-sanitizer.php',
         'AMP_Gallery_Block_Sanitizer' => __DIR__ . '/../..' . '/includes/sanitizers/class-amp-gallery-block-sanitizer.php',
         'AMP_Gallery_Embed_Handler' => __DIR__ . '/../..' . '/includes/embeds/class-amp-gallery-embed-handler.php',
         'AMP_Gfycat_Embed_Handler' => __DIR__ . '/../..' . '/includes/embeds/class-amp-gfycat-embed-handler.php',
@@ -90,6 +91,7 @@ class ComposerStaticInit1005b300fac3b9e59da88de2e4021bbc
         'AMP_Link_Sanitizer' => __DIR__ . '/../..' . '/includes/sanitizers/class-amp-link-sanitizer.php',
         'AMP_Meetup_Embed_Handler' => __DIR__ . '/../..' . '/includes/embeds/class-amp-meetup-embed-handler.php',
         'AMP_Meta_Sanitizer' => __DIR__ . '/../..' . '/includes/sanitizers/class-amp-meta-sanitizer.php',
+        'AMP_Native_Img_Attributes_Sanitizer' => __DIR__ . '/../..' . '/includes/sanitizers/class-amp-native-img-attributes-sanitizer.php',
         'AMP_Nav_Menu_Dropdown_Sanitizer' => __DIR__ . '/../..' . '/includes/sanitizers/class-amp-nav-menu-dropdown-sanitizer.php',
         'AMP_Nav_Menu_Toggle_Sanitizer' => __DIR__ . '/../..' . '/includes/sanitizers/class-amp-nav-menu-toggle-sanitizer.php',
         'AMP_Noscript_Fallback' => __DIR__ . '/../..' . '/includes/sanitizers/trait-amp-noscript-fallback.php',
@@ -166,6 +168,7 @@ class ComposerStaticInit1005b300fac3b9e59da88de2e4021bbc
         'AmpProject\\AmpWP\\Cli\\AmpCommandNamespace' => __DIR__ . '/../..' . '/src/Cli/AmpCommandNamespace.php',
         'AmpProject\\AmpWP\\Cli\\CommandNamespaceRegistration' => __DIR__ . '/../..' . '/src/Cli/CommandNamespaceRegistration.php',
         'AmpProject\\AmpWP\\Cli\\OptimizerCommand' => __DIR__ . '/../..' . '/src/Cli/OptimizerCommand.php',
+        'AmpProject\\AmpWP\\Cli\\OptionCommand' => __DIR__ . '/../..' . '/src/Cli/OptionCommand.php',
         'AmpProject\\AmpWP\\Cli\\TransformerCommand' => __DIR__ . '/../..' . '/src/Cli/TransformerCommand.php',
         'AmpProject\\AmpWP\\Cli\\ValidationCommand' => __DIR__ . '/../..' . '/src/Cli/ValidationCommand.php',
         'AmpProject\\AmpWP\\Component\\CaptionedSlide' => __DIR__ . '/../..' . '/src/Component/CaptionedSlide.php',
@@ -1390,6 +1393,7 @@ class ComposerStaticInit1005b300fac3b9e59da88de2e4021bbc
         'Sabberworm\\CSS\\OutputFormat' => __DIR__ . '/..' . '/sabberworm/php-css-parser/src/OutputFormat.php',
         'Sabberworm\\CSS\\OutputFormatter' => __DIR__ . '/..' . '/sabberworm/php-css-parser/src/OutputFormatter.php',
         'Sabberworm\\CSS\\Parser' => __DIR__ . '/..' . '/sabberworm/php-css-parser/src/Parser.php',
+        'Sabberworm\\CSS\\Parsing\\Anchor' => __DIR__ . '/..' . '/sabberworm/php-css-parser/src/Parsing/Anchor.php',
         'Sabberworm\\CSS\\Parsing\\OutputException' => __DIR__ . '/..' . '/sabberworm/php-css-parser/src/Parsing/OutputException.php',
         'Sabberworm\\CSS\\Parsing\\ParserState' => __DIR__ . '/..' . '/sabberworm/php-css-parser/src/Parsing/ParserState.php',
         'Sabberworm\\CSS\\Parsing\\SourceException' => __DIR__ . '/..' . '/sabberworm/php-css-parser/src/Parsing/SourceException.php',
@@ -1412,6 +1416,7 @@ class ComposerStaticInit1005b300fac3b9e59da88de2e4021bbc
         'Sabberworm\\CSS\\Value\\CalcFunction' => __DIR__ . '/..' . '/sabberworm/php-css-parser/src/Value/CalcFunction.php',
         'Sabberworm\\CSS\\Value\\CalcRuleValueList' => __DIR__ . '/..' . '/sabberworm/php-css-parser/src/Value/CalcRuleValueList.php',
         'Sabberworm\\CSS\\Value\\Color' => __DIR__ . '/..' . '/sabberworm/php-css-parser/src/Value/Color.php',
+        'Sabberworm\\CSS\\Value\\Expression' => __DIR__ . '/..' . '/sabberworm/php-css-parser/src/Value/Expression.php',
         'Sabberworm\\CSS\\Value\\LineName' => __DIR__ . '/..' . '/sabberworm/php-css-parser/src/Value/LineName.php',
         'Sabberworm\\CSS\\Value\\PrimitiveValue' => __DIR__ . '/..' . '/sabberworm/php-css-parser/src/Value/PrimitiveValue.php',
         'Sabberworm\\CSS\\Value\\RuleValueList' => __DIR__ . '/..' . '/sabberworm/php-css-parser/src/Value/RuleValueList.php',
@@ -1427,9 +1432,9 @@ class ComposerStaticInit1005b300fac3b9e59da88de2e4021bbc
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit1005b300fac3b9e59da88de2e4021bbc::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit1005b300fac3b9e59da88de2e4021bbc::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInit1005b300fac3b9e59da88de2e4021bbc::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInitb01de5a5e4a9a5142429384727b3cb65::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitb01de5a5e4a9a5142429384727b3cb65::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInitb01de5a5e4a9a5142429384727b3cb65::$classMap;
 
         }, null, ClassLoader::class);
     }

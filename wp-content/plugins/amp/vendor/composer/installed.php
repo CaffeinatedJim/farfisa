@@ -5,18 +5,18 @@
         'type' => 'wordpress-plugin',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => '4e54b03dce6f360845bfde5dbd19f85cccab7287',
+        'reference' => '44fd13dbb89ea9f86263a79dab42a2aa6dd0e1b4',
         'name' => 'ampproject/amp-wp',
         'dev' => false,
     ),
     'versions' => array(
         'ampproject/amp-toolbox' => array(
-            'pretty_version' => '0.11.2',
-            'version' => '0.11.2.0',
+            'pretty_version' => '0.11.3',
+            'version' => '0.11.3.0',
             'type' => 'library',
             'install_path' => __DIR__ . '/../ampproject/amp-toolbox',
             'aliases' => array(),
-            'reference' => '8fa158845c980437831397100ca7133eee76c61d',
+            'reference' => '56c812508f5ebe538036d75cf0c21de094b316d3',
             'dev_requirement' => false,
         ),
         'ampproject/amp-wp' => array(
@@ -25,7 +25,7 @@
             'type' => 'wordpress-plugin',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => '4e54b03dce6f360845bfde5dbd19f85cccab7287',
+            'reference' => '44fd13dbb89ea9f86263a79dab42a2aa6dd0e1b4',
             'dev_requirement' => false,
         ),
         'fasterimage/fasterimage' => array(
@@ -38,12 +38,14 @@
             'dev_requirement' => false,
         ),
         'sabberworm/php-css-parser' => array(
-            'pretty_version' => '8.4.0',
-            'version' => '8.4.0.0',
+            'pretty_version' => 'dev-master',
+            'version' => 'dev-master',
             'type' => 'library',
             'install_path' => __DIR__ . '/../sabberworm/php-css-parser',
-            'aliases' => array(),
-            'reference' => 'e41d2140031d533348b2192a83f02d8dd8a71d30',
+            'aliases' => array(
+                0 => '9999999-dev',
+            ),
+            'reference' => 'cc791ad',
             'dev_requirement' => false,
         ),
         'willwashburn/stream' => array(
