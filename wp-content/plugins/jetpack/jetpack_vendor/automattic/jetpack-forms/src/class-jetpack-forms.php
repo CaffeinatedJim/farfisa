@@ -9,12 +9,13 @@ namespace Automattic\Jetpack\Forms;
 
 use Automattic\Jetpack\Forms\ContactForm\Util;
 use Automattic\Jetpack\Forms\Dashboard\Dashboard;
+use Automattic\Jetpack\Forms\Dashboard\Dashboard_View_Switch;
 /**
  * Understands the Jetpack Forms package.
  */
 class Jetpack_Forms {
 
-	const PACKAGE_VERSION = '0.6.0.2';
+	const PACKAGE_VERSION = '0.30.13';
 
 	/**
 	 * Load the contact form module.
@@ -23,11 +24,13 @@ class Jetpack_Forms {
 		Util::init();
 
 		if ( is_admin() && self::is_feedback_dashboard_enabled() ) {
-			$dashboard = new Dashboard();
+			$view_switch = new Dashboard_View_Switch();
+
+			$dashboard = new Dashboard( $view_switch );
 			$dashboard->init();
 		}
 
-		if ( is_admin() && apply_filters( 'tmp_grunion_allow_editor_view', true ) ) {
+		if ( is_admin() && apply_filters_deprecated( 'tmp_grunion_allow_editor_view', array( true ), '0.30.5', '', 'This functionality will be removed in an upcoming version.' ) ) {
 			add_action( 'current_screen', '\Automattic\Jetpack\Forms\ContactForm\Editor_View::add_hooks' );
 		}
 
@@ -44,6 +47,13 @@ class Jetpack_Forms {
 	}
 
 	/**
+	 * Get the assets URL.
+	 */
+	public static function assets_url() {
+		return plugin_dir_url( __DIR__ ) . 'assets';
+	}
+
+	/**
 	 * Returns true if the feedback dashboard is enabled.
 	 *
 	 * @return boolean
@@ -57,6 +67,6 @@ class Jetpack_Forms {
 		 *
 		 * @param bool false Should the new Jetpack Forms dashboard be enabled? Default to false.
 		 */
-		return apply_filters( 'jetpack_forms_dashboard_enable', false );
+		return apply_filters( 'jetpack_forms_dashboard_enable', true );
 	}
 }

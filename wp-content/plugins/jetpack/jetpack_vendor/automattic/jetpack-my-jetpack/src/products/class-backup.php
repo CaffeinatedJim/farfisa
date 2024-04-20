@@ -8,7 +8,7 @@
 namespace Automattic\Jetpack\My_Jetpack\Products;
 
 use Automattic\Jetpack\Connection\Client;
-use Automattic\Jetpack\My_Jetpack\Product;
+use Automattic\Jetpack\My_Jetpack\Hybrid_Product;
 use Automattic\Jetpack\My_Jetpack\Wpcom_Products;
 use Automattic\Jetpack\Redirect;
 use Jetpack_Options;
@@ -17,7 +17,7 @@ use WP_Error;
 /**
  * Class responsible for handling the Backup product
  */
-class Backup extends Product {
+class Backup extends Hybrid_Product {
 
 	/**
 	 * The product slug
@@ -45,21 +45,28 @@ class Backup extends Product {
 	public static $plugin_slug = 'jetpack-backup';
 
 	/**
-	 * Get the internationalized product name
+	 * Backup has a standalone plugin
+	 *
+	 * @var bool
+	 */
+	public static $has_standalone_plugin = true;
+
+	/**
+	 * Get the product name
 	 *
 	 * @return string
 	 */
 	public static function get_name() {
-		return __( 'VaultPress Backup', 'jetpack-my-jetpack' );
+		return 'VaultPress Backup';
 	}
 
 	/**
-	 * Get the internationalized product title
+	 * Get the product title
 	 *
 	 * @return string
 	 */
 	public static function get_title() {
-		return __( 'Jetpack VaultPress Backup', 'jetpack-my-jetpack' );
+		return 'Jetpack VaultPress Backup';
 	}
 
 	/**
@@ -68,7 +75,11 @@ class Backup extends Product {
 	 * @return string
 	 */
 	public static function get_description() {
-		return __( 'Save every change', 'jetpack-my-jetpack' );
+		if ( static::is_active() ) {
+			return __( 'Save every change', 'jetpack-my-jetpack' );
+		}
+
+		return __( 'Your site is not backed up', 'jetpack-my-jetpack' );
 	}
 
 	/**
@@ -116,6 +127,13 @@ class Backup extends Product {
 	 */
 	public static function get_wpcom_product_slug() {
 		return 'jetpack_backup_t1_yearly';
+	}
+
+	/**
+	 * Get the URL where the user should be redirected after checkout
+	 */
+	public static function get_post_checkout_url() {
+		return self::get_manage_url();
 	}
 
 	/**
@@ -198,8 +216,12 @@ class Backup extends Product {
 	 * @return ?string
 	 */
 	public static function get_manage_url() {
-		if ( static::is_plugin_active() ) {
+		// check standalone first
+		if ( static::is_standalone_plugin_active() ) {
 			return admin_url( 'admin.php?page=jetpack-backup' );
+			// otherwise, check for the main Jetpack plugin
+		} elseif ( static::is_jetpack_plugin_active() ) {
+			return Redirect::get_url( 'my-jetpack-manage-backup' );
 		}
 	}
 

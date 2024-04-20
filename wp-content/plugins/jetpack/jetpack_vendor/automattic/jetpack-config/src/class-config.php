@@ -12,14 +12,12 @@ namespace Automattic\Jetpack;
  * contain the package classes shown below. The consumer plugin
  * must require the corresponding packages to use these features.
  */
-use Automattic\Jetpack\Blaze as Blaze;
 use Automattic\Jetpack\Connection\Manager;
 use Automattic\Jetpack\Connection\Plugin;
 use Automattic\Jetpack\Import\Main as Import_Main;
-use Automattic\Jetpack\JITM as JITM;
 use Automattic\Jetpack\JITMS\JITM as JITMS_JITM;
-use Automattic\Jetpack\Post_List\Post_List as Post_List;
-use Automattic\Jetpack\Publicize\Publicize_Setup as Publicize_Setup;
+use Automattic\Jetpack\Post_List\Post_List;
+use Automattic\Jetpack\Publicize\Publicize_Setup;
 use Automattic\Jetpack\Search\Initializer as Jetpack_Search_Main;
 use Automattic\Jetpack\Stats\Main as Stats_Main;
 use Automattic\Jetpack\Stats_Admin\Main as Stats_Admin_Main;
@@ -55,7 +53,7 @@ class Config {
 		'videopress'      => false,
 		'stats'           => false,
 		'stats_admin'     => false,
-		'blaze'           => false,
+		'yoast_promo'     => false,
 		'import'          => false,
 	);
 
@@ -161,8 +159,8 @@ class Config {
 			$this->ensure_class( 'Automattic\Jetpack\Stats_Admin\Main' ) && $this->ensure_feature( 'stats_admin' );
 		}
 
-		if ( $this->config['blaze'] ) {
-			$this->ensure_class( 'Automattic\Jetpack\Blaze' ) && $this->ensure_feature( 'blaze' );
+		if ( $this->config['yoast_promo'] ) {
+			$this->ensure_class( 'Automattic\Jetpack\Yoast_Promo' ) && $this->ensure_feature( 'yoast_promo' );
 		}
 
 		if ( $this->config['import'] ) {
@@ -355,10 +353,10 @@ class Config {
 	}
 
 	/**
-	 * Enables Blaze.
+	 * Enables Yoast Promo.
 	 */
-	protected function enable_blaze() {
-		Blaze::init();
+	protected function enable_yoast_promo() {
+		Yoast_Promo::init();
 		return true;
 	}
 
@@ -453,5 +451,4 @@ class Config {
 	protected function get_feature_options( $feature ) {
 		return empty( $this->feature_options[ $feature ] ) ? array() : $this->feature_options[ $feature ];
 	}
-
 }

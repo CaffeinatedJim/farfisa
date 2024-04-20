@@ -35,7 +35,7 @@ class Util {
 
 		add_action( 'init', '\Automattic\Jetpack\Forms\ContactForm\Contact_Form_Plugin::init', 9 );
 		add_action( 'grunion_scheduled_delete', '\Automattic\Jetpack\Forms\ContactForm\Util::grunion_delete_old_spam' );
-		add_action( 'grunion_pre_message_sent', '\Automattic\Jetpack\Forms\ContactForm\Util::jetpack_tracks_record_grunion_pre_message_sent', 12, 3 );
+		add_action( 'grunion_pre_message_sent', '\Automattic\Jetpack\Forms\ContactForm\Util::jetpack_tracks_record_grunion_pre_message_sent', 12 );
 	}
 
 	/**
@@ -47,7 +47,7 @@ class Util {
 
 		$patterns = array(
 			'contact-form'      => array(
-				'title'      => 'Contact Form',
+				'title'      => __( 'Contact Form', 'jetpack-forms' ),
 				'blockTypes' => array( 'jetpack/contact-form' ),
 				'categories' => array( $category_slug ),
 				'content'    => '<!-- wp:jetpack/contact-form {"style":{"spacing":{"padding":{"top":"16px","right":"16px","bottom":"16px","left":"16px"}}}} -->
@@ -60,7 +60,7 @@ class Util {
                     <!-- /wp:jetpack/contact-form -->',
 			),
 			'newsletter-form'   => array(
-				'title'      => 'Newsletter Subscription Form',
+				'title'      => __( 'Lead Capture Form', 'jetpack-forms' ),
 				'blockTypes' => array( 'jetpack/contact-form' ),
 				'categories' => array( $category_slug ),
 				'content'    => '<!-- wp:jetpack/contact-form {"style":{"spacing":{"padding":{"top":"16px","right":"16px","bottom":"16px","left":"16px"}}}} -->
@@ -73,7 +73,7 @@ class Util {
                     <!-- /wp:jetpack/contact-form -->',
 			),
 			'rsvp-form'         => array(
-				'title'      => 'RSVP Form',
+				'title'      => __( 'RSVP Form', 'jetpack-forms' ),
 				'blockTypes' => array( 'jetpack/contact-form' ),
 				'categories' => array( $category_slug ),
 				'content'    => '<!-- wp:jetpack/contact-form {"subject":"A new RSVP from your website","style":{"spacing":{"padding":{"top":"16px","right":"16px","bottom":"16px","left":"16px"}}}} -->
@@ -87,7 +87,7 @@ class Util {
                     <!-- /wp:jetpack/contact-form -->',
 			),
 			'registration-form' => array(
-				'title'      => 'Registration Form',
+				'title'      => __( 'Registration Form', 'jetpack-forms' ),
 				'blockTypes' => array( 'jetpack/contact-form' ),
 				'categories' => array( $category_slug ),
 				'content'    => '<!-- wp:jetpack/contact-form {"subject":"A new registration from your website","style":{"spacing":{"padding":{"top":"16px","right":"16px","bottom":"16px","left":"16px"}}}} -->
@@ -102,7 +102,7 @@ class Util {
                     <!-- /wp:jetpack/contact-form -->',
 			),
 			'appointment-form'  => array(
-				'title'      => 'Appointment Form',
+				'title'      => __( 'Appointment Form', 'jetpack-forms' ),
 				'blockTypes' => array( 'jetpack/contact-form' ),
 				'categories' => array( $category_slug ),
 				'content'    => '<!-- wp:jetpack/contact-form {"subject":"A new appointment booked from your website","style":{"spacing":{"padding":{"top":"16px","right":"16px","bottom":"16px","left":"16px"}}}} -->
@@ -118,7 +118,7 @@ class Util {
                     <!-- /wp:jetpack/contact-form -->',
 			),
 			'feedback-form'     => array(
-				'title'      => 'Feedback Form',
+				'title'      => __( 'Feedback Form', 'jetpack-forms' ),
 				'blockTypes' => array( 'jetpack/contact-form' ),
 				'categories' => array( $category_slug ),
 				'content'    => '<!-- wp:jetpack/contact-form {"subject":"New feedback received from your website","style":{"spacing":{"padding":{"top":"16px","right":"16px","bottom":"16px","left":"16px"}}}} -->
@@ -167,7 +167,7 @@ class Util {
 	 * Sets the $grunion_block_template_part_id global.
 	 *
 	 * This is part of the fix for Contact Form Blocks added to FSE _template parts_ (e.g footer).
-	 * The global is processed in Grunion_Contact_Form::parse().
+	 * The global is processed in Contact_Form::parse().
 	 *
 	 * @param string $template_part_id ID for the currently rendered template part.
 	 */
@@ -262,58 +262,20 @@ class Util {
 	/**
 	 * Send an event to Tracks on form submission.
 	 *
-	 * @param int   $post_id - the post_id for the CPT that is created.
-	 * @param array $all_values - fields from the default contact form.
-	 * @param array $extra_values - extra fields added to from the contact form.
+	 * @param int $post_id - the post_id for the CPT that is created.
 	 *
 	 * @return null|void
 	 */
-	public static function jetpack_tracks_record_grunion_pre_message_sent( $post_id, $all_values, $extra_values ) {
-		// Do not do anything if the submission is not from a block.
-		if (
-			! isset( $extra_values['is_block'] )
-			|| ! $extra_values['is_block']
-		) {
-			return;
-		}
-
-		/*
-		 * Event details.
-		 */
-		$event_user  = wp_get_current_user();
-		$event_name  = 'contact_form_block_message_sent';
-		$event_props = array(
-			'entry_permalink' => esc_url( $all_values['entry_permalink'] ),
-			'feedback_id'     => esc_attr( $all_values['feedback_id'] ),
-		);
-
-		/*
-		 * Record event.
-		 * We use different libs on wpcom and Jetpack.
-		 */
-		if ( defined( 'IS_WPCOM' ) && IS_WPCOM ) {
-			$event_name             = 'wpcom_' . $event_name;
-			$event_props['blog_id'] = get_current_blog_id();
-			// If the form was sent by a logged out visitor, record event with blog owner.
-			if ( empty( $event_user->ID ) ) {
-				$event_user_id = wpcom_get_blog_owner( $event_props['blog_id'] );
-				$event_user    = get_userdata( $event_user_id );
-			}
-
-			require_lib( 'tracks/client' );
-			tracks_record_event( $event_user, $event_name, $event_props );
+	public static function jetpack_tracks_record_grunion_pre_message_sent( $post_id ) {
+		$post = get_post( $post_id );
+		if ( $post ) {
+			$extra = gmdate( 'Y-W', strtotime( $post->post_date_gmt ) );
 		} else {
-			// If the form was sent by a logged out visitor, record event with Jetpack master user.
-			if ( empty( $event_user->ID ) ) {
-				$master_user_id = \Jetpack_Options::get_option( 'master_user' );
-				if ( ! empty( $master_user_id ) ) {
-					$event_user = get_userdata( $master_user_id );
-				}
-			}
-
-			$tracking = new \Automattic\Jetpack\Tracking();
-			$tracking->record_user_event( $event_name, $event_props, $event_user );
+			$extra = 'no-post';
 		}
+
+		/** This action is documented in jetpack/modules/widgets/social-media-icons.php */
+		do_action( 'jetpack_bump_stats_extras', 'jetpack_forms_message_sent', $extra );
 	}
 
 	/**

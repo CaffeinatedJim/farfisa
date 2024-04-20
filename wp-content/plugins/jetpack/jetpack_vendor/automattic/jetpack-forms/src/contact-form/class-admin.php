@@ -1,6 +1,6 @@
 <?php
 /**
- * Contact_Form_Admin class.
+ * Admin class.
  *
  * @package automattic/jetpack-forms
  */
@@ -14,7 +14,7 @@ use Automattic\Jetpack\Forms\Service\Google_Drive;
 use Automattic\Jetpack\Redirect;
 
 /**
- * Class Grunion_Admin
+ * Class Admin
  *
  * Singleton for Grunion admin area support.
  */
@@ -36,7 +36,7 @@ class Admin {
 	/**
 	 * Instantiates this singleton class
 	 *
-	 * @return Grunion_Admin The Grunion Admin class instance.
+	 * @return Admin The Admin class instance.
 	 */
 	public static function init() {
 		static $instance = false;
@@ -49,7 +49,7 @@ class Admin {
 	}
 
 	/**
-	 * Grunion_Admin constructor
+	 * Admin constructor
 	 */
 	public function __construct() {
 		add_action( 'media_buttons', array( $this, 'grunion_media_button' ), 999 );
@@ -109,13 +109,13 @@ class Admin {
 			return;
 		}
 
-		// if there aren't any feedbacks, bail out
-		if ( ! (int) wp_count_posts( 'feedback' )->publish ) {
+		$current_screen = get_current_screen();
+		if ( ! in_array( $current_screen->id, array( 'edit-feedback', 'feedback_page_feedback-export' ), true ) ) {
 			return;
 		}
 
-		$current_screen = get_current_screen();
-		if ( ! in_array( $current_screen->id, array( 'edit-feedback', 'feedback_page_feedback-export' ), true ) ) {
+		// if there aren't any feedbacks, bail out
+		if ( ! (int) wp_count_posts( 'feedback' )->publish ) {
 			return;
 		}
 
@@ -222,6 +222,8 @@ class Admin {
 		}
 
 		$sheet = Google_Drive::create_sheet( $user_id, $spreadsheet_title, $sheet_data );
+
+		$grunion->record_tracks_event( 'forms_export_responses', array( 'format' => 'gsheets' ) );
 
 		wp_send_json(
 			array(
@@ -431,7 +433,7 @@ class Admin {
 	/**
 	 * Display edit form view.
 	 *
-	 * @return void
+	 * @return never
 	 */
 	public function grunion_display_form_view() {
 		if ( current_user_can( 'edit_posts' ) ) {
@@ -447,16 +449,16 @@ class Admin {
 	 */
 	public function grunion_admin_css() {
 		global $current_screen;
-		if ( $current_screen === null ) {
-			return;
-		}
-		if ( 'edit-feedback' !== $current_screen->id ) {
+		if (
+			$current_screen === null
+			|| 'edit-feedback' !== $current_screen->id
+		) {
 			return;
 		}
 
 		wp_enqueue_script( 'wp-lists' );
 
-		wp_register_style( 'grunion-admin.css', plugin_dir_url( __FILE__ ) . 'css/grunion-admin.css', array(), \JETPACK__VERSION );
+		wp_register_style( 'grunion-admin.css', plugin_dir_url( __FILE__ ) . '/../../../dist/contact-form/css/grunion-admin.css', array(), \JETPACK__VERSION );
 		wp_style_add_data( 'grunion-admin.css', 'rtl', 'replace' );
 
 		wp_enqueue_style( 'grunion-admin.css' );
@@ -469,8 +471,10 @@ class Admin {
 	 */
 	public function grunion_admin_js() {
 		global $current_screen;
-
-		if ( 'edit-feedback' !== $current_screen->id ) {
+		if (
+			$current_screen === null
+			|| 'edit-feedback' !== $current_screen->id
+		) {
 			return;
 		}
 
@@ -599,7 +603,10 @@ class Admin {
 	 */
 	public function grunion_admin_bulk_actions( $actions ) {
 		global $current_screen;
-		if ( 'edit-feedback' !== $current_screen->id ) {
+		if (
+			$current_screen === null
+			|| 'edit-feedback' !== $current_screen->id
+		) {
 			return $actions;
 		}
 
@@ -615,7 +622,10 @@ class Admin {
 	 */
 	public function grunion_admin_view_tabs( $views ) {
 		global $current_screen;
-		if ( 'edit-feedback' !== $current_screen->id ) {
+		if (
+			$current_screen === null
+			|| 'edit-feedback' !== $current_screen->id
+		) {
 			return $views;
 		}
 
@@ -663,12 +673,12 @@ class Admin {
 	public function grunion_manage_post_column_from( $post ) {
 		$content_fields = Contact_Form_Plugin::parse_fields_from_content( $post->ID );
 
-		if ( isset( $content_fields['_feedback_author'] ) ) {
+		if ( ! empty( $content_fields['_feedback_author'] ) ) {
 			echo esc_html( $content_fields['_feedback_author'] );
 			return;
 		}
 
-		if ( isset( $content_fields['_feedback_author_email'] ) ) {
+		if ( ! empty( $content_fields['_feedback_author_email'] ) ) {
 			printf(
 				"<a href='%1\$s' target='_blank'>%2\$s</a><br />",
 				esc_url( 'mailto:' . $content_fields['_feedback_author_email'] ),
@@ -677,8 +687,8 @@ class Admin {
 			return;
 		}
 
-		if ( isset( $content_fields['_feedback_ip'] ) ) {
-			echo esc_html( $content_fields['feedback_ip'] );
+		if ( ! empty( $content_fields['_feedback_ip'] ) ) {
+			echo esc_html( $content_fields['_feedback_ip'] );
 			return;
 		}
 
@@ -702,17 +712,30 @@ class Admin {
 		$post_content = get_post_field( 'post_content', $post->ID );
 		$content      = explode( '<!--more-->', $post_content );
 		$content      = str_ireplace( array( '<br />', ')</p>' ), '', $content[1] );
-		$chunks       = explode( "\nArray", $content );
-		if ( $chunks[1] ) {
-			// re-construct the array string
-			$array = 'Array' . $chunks[1];
-			// re-construct the array
-			$rearray         = Contact_Form_Plugin::reverse_that_print( $array, true );
-			$response_fields = is_array( $rearray ) ? $rearray : array();
-		} else {
-			// couldn't reconstruct array, use the old method
-			$content_fields  = Contact_Form_Plugin::parse_fields_from_content( $post->ID );
-			$response_fields = isset( $content_fields['_feedback_all_fields'] ) ? $content_fields['_feedback_all_fields'] : array();
+		$chunks       = explode( "\nJSON_DATA", $content );
+
+		$response_fields = array();
+
+		if ( is_array( $chunks ) && isset( $chunks[1] ) ) {
+			$rearray = json_decode( $chunks[1], true );
+			if ( is_array( $rearray ) && isset( $rearray['feedback_id'] ) ) {
+				$response_fields = $rearray;
+			}
+		}
+
+		if ( empty( $response_fields ) ) {
+			$chunks = explode( "\nArray", $content );
+			if ( ! empty( $chunks[1] ) ) {
+				// re-construct the array string
+				$array = 'Array' . $chunks[1];
+				// re-construct the array
+				$rearray         = Contact_Form_Plugin::reverse_that_print( $array, true );
+				$response_fields = is_array( $rearray ) ? $rearray : array();
+			} else {
+				// couldn't reconstruct array, use the old method
+				$content_fields  = Contact_Form_Plugin::parse_fields_from_content( $post->ID );
+				$response_fields = isset( $content_fields['_feedback_all_fields'] ) ? $content_fields['_feedback_all_fields'] : array();
+			}
 		}
 
 		$response_fields = array_diff_key( $response_fields, array_flip( $non_printable_keys ) );
@@ -727,7 +750,7 @@ class Admin {
 			printf(
 				'<div class="feedback_response__item-key">%s</div><div class="feedback_response__item-value">%s</div>',
 				esc_html( preg_replace( '#^\d+_#', '', $key ) ),
-				esc_html( $value )
+				nl2br( esc_html( $value ) )
 			);
 		}
 		echo '</div>';
@@ -873,9 +896,9 @@ class Admin {
 			);
 			$actions['trash'] = sprintf(
 				'<a class="submitdelete" title="%s" href="%s">%s</a>',
-				esc_attr__( 'Trash', 'jetpack-forms' ),
+				esc_attr_x( 'Trash', 'verb', 'jetpack-forms' ),
 				get_delete_post_link( $post->ID ),
-				esc_html__( 'Trash', 'jetpack-forms' )
+				esc_html_x( 'Trash', 'verb', 'jetpack-forms' )
 			);
 		} elseif ( $post->post_status === 'spam' ) {
 			$actions['unspam unapprove'] = sprintf(
@@ -920,7 +943,7 @@ class Admin {
 	 */
 	public function grunion_sort_objects( $a, $b ) {
 		if ( isset( $a['order'] ) && isset( $b['order'] ) ) {
-			return $a['order'] - $b['order'];
+			return $a['order'] <=> $b['order'];
 		}
 		return 0;
 	}
@@ -928,6 +951,8 @@ class Admin {
 	/**
 	 * Take an array of field types from the form builder, and construct a shortcode form.
 	 * returns both the shortcode form, and HTML markup representing a preview of the form
+	 *
+	 * @return never
 	 */
 	public function grunion_ajax_shortcode() {
 		check_ajax_referer( 'grunion_shortcode' );
@@ -946,7 +971,7 @@ class Admin {
 
 		if ( isset( $_POST['fields'] ) && is_array( $_POST['fields'] ) ) {
 			$fields = sanitize_text_field( stripslashes_deep( $_POST['fields'] ) );
-			usort( $fields, 'grunion_sort_objects' );
+			usort( $fields, array( $this, 'grunion_sort_objects' ) );
 
 			$field_shortcodes = array();
 
@@ -975,6 +1000,8 @@ class Admin {
 	/**
 	 * Takes a post_id, extracts the contact-form shortcode from that post (if there is one), parses it,
 	 * and constructs a json object representing its contents and attributes.
+	 *
+	 * @return never
 	 */
 	public function grunion_ajax_shortcode_to_json() {
 		global $post;
@@ -1041,7 +1068,9 @@ class Admin {
 			wp_die( esc_html__( 'You are not allowed to manage this item.', 'jetpack-forms' ) );
 		}
 
-		require_once __DIR__ . '/grunion-contact-form.php';
+		// init will construct/get the instance and make sure all the filters and actions
+		// are in place for this process to go through
+		Contact_Form_Plugin::init();
 
 		$current_menu = '';
 		if ( isset( $_POST['sub_menu'] ) && preg_match( '|post_type=feedback|', sanitize_text_field( wp_unslash( $_POST['sub_menu'] ) ) ) ) {
@@ -1061,13 +1090,13 @@ class Admin {
 			$post->post_status = 'spam';
 			$status            = wp_insert_post( $post );
 
-			/** This action is already documented in modules/contact-form/admin.php */
+			/** This action is already documented in \Automattic\Jetpack\Forms\ContactForm\Admin */
 			do_action( 'contact_form_akismet', 'spam', $akismet_values );
 		} elseif ( $_POST['make_it'] === 'ham' ) {
 			$post->post_status = 'publish';
 			$status            = wp_insert_post( $post );
 
-			/** This action is already documented in modules/contact-form/admin.php */
+			/** This action is already documented in \Automattic\Jetpack\Forms\ContactForm\Admin */
 			do_action( 'contact_form_akismet', 'ham', $akismet_values );
 
 			$comment_author_email = false;
@@ -1176,7 +1205,7 @@ class Admin {
 				$status_html .= ' class="current"';
 			}
 
-			$status_html .= '>' . __( 'Trash', 'jetpack-forms' ) . ' <span class="count">';
+			$status_html .= '>' . _x( 'Trash', 'noun', 'jetpack-forms' ) . ' <span class="count">';
 			$status_html .= '(' . number_format( $status['trash'] ) . ')';
 			$status_html .= '</span></a>';
 			if ( isset( $status['spam'] ) ) {
@@ -1230,18 +1259,17 @@ class Admin {
 		}
 
 		// Add the scripts that handle the spam check event.
-		wp_register_script(
+		Assets::register_script(
 			'grunion-admin',
-			Assets::get_file_url_for_environment(
-				'_inc/build/contact-form/js/grunion-admin.min.js',
-				'modules/contact-form/js/grunion-admin.js'
-			),
-			array( 'jquery' ),
-			\JETPACK__VERSION,
-			true
+			'../../dist/contact-form/js/grunion-admin.js',
+			__FILE__,
+			array(
+				'enqueue'      => true,
+				'dependencies' => array( 'jquery' ),
+				'version'      => \JETPACK__VERSION,
+				'in_footer'    => true,
+			)
 		);
-
-		wp_enqueue_script( 'grunion-admin' );
 
 		wp_enqueue_style( 'grunion.css' );
 
@@ -1370,8 +1398,9 @@ class Admin {
 
 		$query = 'post_type=feedback&post_status=publish';
 
-		if ( isset( $_POST['limit'], $_POST['offset'] ) ) {
-			$query .= '&posts_per_page=' . (int) $_POST['limit'] . '&offset=' . (int) $_POST['offset'];
+		if ( isset( $_POST['limit'] ) && isset( $_POST['offset'] ) ) {
+			// phpcs:ignore Generic.Strings.UnnecessaryStringConcat.Found -- Avoiding https://github.com/WordPress/WordPress-Coding-Standards/issues/2390
+			$query .= '&posts_per' . '_page=' . (int) $_POST['limit'] . '&offset=' . (int) $_POST['offset'];
 		}
 
 		$approved_feedbacks = get_posts( $query );
@@ -1407,7 +1436,7 @@ class Admin {
 						'post_status' => 'spam',
 					)
 				);
-				/** This action is already documented in modules/contact-form/admin.php */
+				/** This action is already documented in \Automattic\Jetpack\Forms\ContactForm\Admin */
 				do_action( 'contact_form_akismet', 'spam', $meta );
 			}
 		}

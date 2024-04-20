@@ -10,7 +10,7 @@
  * Auto Activate: No
  * Module Tags: Social, Recommended
  * Feature: Engagement
- * Additional Search Queries: facebook, jetpack publicize, twitter, tumblr, linkedin, social, tweet, connections, sharing, social media, automated, automated sharing, auto publish, auto tweet and like, auto tweet, facebook auto post, facebook posting
+ * Additional Search Queries: facebook, jetpack publicize, tumblr, linkedin, social, tweet, connections, sharing, social media, automated, automated sharing, auto publish, auto tweet and like, auto tweet, facebook auto post, facebook posting
  *
  * @package automattic/jetpack
  */
@@ -21,6 +21,12 @@
  * Class Jetpack_Publicize
  */
 class Jetpack_Publicize {
+	/**
+	 * Current status about Jetpack modules.
+	 *
+	 * @var Modules
+	 */
+	public $modules;
 
 	/**
 	 * If Publicize is executing within Jetpack.
@@ -40,11 +46,6 @@ class Jetpack_Publicize {
 
 		if ( $this->in_jetpack ) {
 			Jetpack::enable_module_configurable( __FILE__ );
-
-			// if sharedaddy isn't active, the sharing menu hasn't been added yet.
-			if ( $this->modules->is_active( 'publicize' ) && ! $this->modules->is_active( 'sharedaddy' ) ) {
-				add_action( 'admin_menu', array( &$publicize_ui, 'sharing_menu' ) );
-			}
 
 			/*
 			 * The Publicize Options array does not currently have UI since it is being added
@@ -86,19 +87,6 @@ class Jetpack_Publicize {
 			$publicize    = new Publicize();
 			$publicize_ui = new Automattic\Jetpack\Publicize\Publicize_UI();
 		}
-
-		add_action(
-			'jetpack_register_gutenberg_extensions',
-			function () {
-				global $publicize;
-				if ( $publicize->current_user_can_access_publicize_data() ) {
-					Jetpack_Gutenberg::set_extension_available( 'jetpack/publicize' );
-				} else {
-					Jetpack_Gutenberg::set_extension_unavailable( 'jetpack/publicize', 'unauthorized' );
-				}
-			}
-		);
-		$publicize_ui->in_jetpack = $this->in_jetpack;
 	}
 }
 

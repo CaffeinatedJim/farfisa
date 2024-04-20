@@ -30,15 +30,14 @@ class Form_View {
 		 */
 		$max_new_fields = apply_filters( 'grunion_max_new_fields', 5 );
 
-		wp_register_script(
+		Assets::register_script(
 			'grunion',
-			Assets::get_file_url_for_environment(
-				'_inc/build/contact-form/js/grunion.min.js',
-				'modules/contact-form/js/grunion.js'
-			),
-			array( 'jquery-ui-sortable', 'jquery-ui-draggable' ),
-			\JETPACK__VERSION,
-			false
+			'../../dist/contact-form/js/grunion.js',
+			__FILE__,
+			array(
+				'dependencies' => array( 'jquery', 'jquery-ui-sortable', 'jquery-ui-draggable' ),
+				'version'      => \JETPACK__VERSION,
+			)
 		);
 
 		wp_localize_script(
@@ -73,7 +72,7 @@ class Form_View {
 		<script type="text/javascript">
 			var ajaxurl = <?php echo wp_json_encode( admin_url( 'admin-ajax.php' ) ); ?>;
 			var postId = <?php echo isset( $_GET['post_id'] ) ? absint( $_GET['post_id'] ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- not making a site change. ?>;
-			var ajax_nonce_shortcode = <?php echo wp_json_encode( wp_create_nonce( 'grunion_shortcode' ) ); ?>; 
+			var ajax_nonce_shortcode = <?php echo wp_json_encode( wp_create_nonce( 'grunion_shortcode' ) ); ?>;
 			var ajax_nonce_json = <?php echo wp_json_encode( wp_create_nonce( 'grunion_shortcode_to_json' ) ); ?>;
 		</script>
 		<?php wp_print_scripts( 'grunion' ); ?>

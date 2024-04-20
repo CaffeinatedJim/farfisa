@@ -8,8 +8,9 @@
 namespace Automattic\Jetpack\Forms\ContactForm;
 
 use Automattic\Jetpack\Assets;
-use Automattic\Jetpack\Blocks;
+use Automattic\Jetpack\Extensions\Contact_Form\Contact_Form_Block;
 use Automattic\Jetpack\Forms\Jetpack_Forms;
+use Automattic\Jetpack\Forms\Service\Post_To_Url;
 
 /**
  * Sets up various actions, filters, post types, post statuses, shortcodes.
@@ -128,7 +129,7 @@ class Contact_Form_Plugin {
 	}
 
 	/**
-	 * Class uses singleton pattern; use Grunion_Contact_Form_Plugin::init() to initialize.
+	 * Class uses singleton pattern; use Contact_Form_Plugin::init() to initialize.
 	 */
 	protected function __construct() {
 		$this->add_shortcode();
@@ -168,6 +169,7 @@ class Contact_Form_Plugin {
 		// Export to CSV feature
 		if ( is_admin() ) {
 			add_action( 'wp_ajax_feedback_export', array( $this, 'download_feedback_as_csv' ) );
+			add_action( 'wp_ajax_create_new_form', array( $this, 'create_new_form' ) );
 		}
 		add_action( 'admin_menu', array( $this, 'admin_menu' ) );
 		add_action( 'current_screen', array( $this, 'unread_count' ) );
@@ -210,6 +212,7 @@ class Contact_Form_Plugin {
 				'map_meta_cap'          => true,
 			)
 		);
+		add_filter( 'wp_untrash_post_status', array( $this, 'untrash_feedback_status_handler' ), 10, 3 );
 
 		// Add to REST API post type allowed list.
 		add_filter( 'rest_api_allowed_post_types', array( $this, 'allow_feedback_rest_api_type' ) );
@@ -248,54 +251,34 @@ class Contact_Form_Plugin {
 		 *  }
 		 *  add_action('wp_print_styles', 'remove_grunion_style');
 		 */
-		wp_register_style( 'grunion.css', Jetpack_Forms::plugin_url() . 'contact-form/css/grunion.css', array(), \JETPACK__VERSION );
+		wp_register_style( 'grunion.css', Jetpack_Forms::plugin_url() . '../dist/contact-form/css/grunion.css', array(), \JETPACK__VERSION );
 		wp_style_add_data( 'grunion.css', 'rtl', 'replace' );
 
-		add_action( 'enqueue_block_editor_assets', array( $this, 'load_blocks_scripts' ) );
+		Assets::register_script(
+			'accessible-form',
+			'../../dist/contact-form/js/accessible-form.js',
+			__FILE__,
+			array(
+				'strategy'     => 'defer',
+				'textdomain'   => 'jetpack-forms',
+				'version'      => \JETPACK__VERSION,
+				'dependencies' => array( 'wp-i18n' ),
+			)
+		);
 
-		self::enqueue_contact_forms_style_script();
+		add_filter( 'js_do_concat', array( __CLASS__, 'disable_forms_view_script_concat' ), 10, 3 );
+
 		self::register_contact_form_blocks();
 	}
 
 	/**
-	 * Loads the Form blocks scripts.
-	 */
-	public static function load_blocks_scripts() {
-		Assets::register_script(
-			'jp-forms-blocks',
-			'../../dist/blocks/editor.js',
-			__FILE__,
-			array(
-				'in_footer'  => true,
-				'textdomain' => 'jetpack-forms',
-				'enqueue'    => true,
-			)
-		);
-	}
-
-	/**
-	 * Enqueue scripts responsible for handling contact form styles.
-	 */
-	private static function enqueue_contact_forms_style_script() {
-		add_filter( 'js_do_concat', array( __CLASS__, 'disable_forms_style_script_concat' ), 10, 3 );
-
-		wp_enqueue_script(
-			'contact-form-styles',
-			plugins_url( 'js/form-styles.js', __FILE__ ),
-			array(),
-			\JETPACK__VERSION,
-			true
-		);
-	}
-
-	/**
-	 * Prevent 'contact-form-styles' script from being concatenated.
+	 * Prevent 'jp-forms-view' script from being concatenated.
 	 *
 	 * @param array  $do_concat - the concatenation flag.
 	 * @param string $handle - script name.
 	 */
-	public static function disable_forms_style_script_concat( $do_concat, $handle ) {
-		if ( 'contact-form-styles' === $handle ) {
+	public static function disable_forms_view_script_concat( $do_concat, $handle ) {
+		if ( 'jp-forms-view' === $handle ) {
 			$do_concat = false;
 		}
 		return $do_concat;
@@ -305,109 +288,8 @@ class Contact_Form_Plugin {
 	 * Register the contact form block.
 	 */
 	private static function register_contact_form_blocks() {
-		Blocks::jetpack_register_block(
-			'jetpack/contact-form',
-			array(
-				'render_callback' => array( __CLASS__, 'gutenblock_render_form' ),
-			)
-		);
-
 		// Field render methods.
-		Blocks::jetpack_register_block(
-			'jetpack/field-text',
-			array(
-				'render_callback' => array( __CLASS__, 'gutenblock_render_field_text' ),
-			)
-		);
-		Blocks::jetpack_register_block(
-			'jetpack/field-name',
-			array(
-				'render_callback' => array( __CLASS__, 'gutenblock_render_field_name' ),
-			)
-		);
-		Blocks::jetpack_register_block(
-			'jetpack/field-email',
-			array(
-				'render_callback' => array( __CLASS__, 'gutenblock_render_field_email' ),
-			)
-		);
-		Blocks::jetpack_register_block(
-			'jetpack/field-url',
-			array(
-				'render_callback' => array( __CLASS__, 'gutenblock_render_field_url' ),
-			)
-		);
-		Blocks::jetpack_register_block(
-			'jetpack/field-date',
-			array(
-				'render_callback' => array( __CLASS__, 'gutenblock_render_field_date' ),
-			)
-		);
-		Blocks::jetpack_register_block(
-			'jetpack/field-telephone',
-			array(
-				'render_callback' => array( __CLASS__, 'gutenblock_render_field_telephone' ),
-			)
-		);
-		Blocks::jetpack_register_block(
-			'jetpack/field-textarea',
-			array(
-				'render_callback' => array( __CLASS__, 'gutenblock_render_field_textarea' ),
-			)
-		);
-		Blocks::jetpack_register_block(
-			'jetpack/field-checkbox',
-			array(
-				'render_callback' => array( __CLASS__, 'gutenblock_render_field_checkbox' ),
-			)
-		);
-		Blocks::jetpack_register_block(
-			'jetpack/field-checkbox-multiple',
-			array(
-				'render_callback' => array( __CLASS__, 'gutenblock_render_field_checkbox_multiple' ),
-			)
-		);
-		Blocks::jetpack_register_block(
-			'jetpack/field-radio',
-			array(
-				'render_callback' => array( __CLASS__, 'gutenblock_render_field_radio' ),
-			)
-		);
-		Blocks::jetpack_register_block(
-			'jetpack/field-select',
-			array(
-				'render_callback' => array( __CLASS__, 'gutenblock_render_field_select' ),
-			)
-		);
-		Blocks::jetpack_register_block(
-			'jetpack/field-consent',
-			array(
-				'render_callback' => array( __CLASS__, 'gutenblock_render_field_consent' ),
-			)
-		);
-	}
-
-	/**
-	 * Render the gutenblock form.
-	 *
-	 * @param array  $atts - the block attributes.
-	 * @param string $content - html content.
-	 *
-	 * @return string
-	 */
-	public static function gutenblock_render_form( $atts, $content ) {
-
-		// Render fallback in other contexts than frontend (i.e. feed, emails, API, etc.), unless the form is being submitted.
-		if ( ! jetpack_is_frontend() && ! isset( $_POST['contact-form-id'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
-			return sprintf(
-				'<div class="%1$s"><a href="%2$s" target="_blank" rel="noopener noreferrer">%3$s</a></div>',
-				esc_attr( Blocks::classes( 'contact-form', $atts ) ),
-				esc_url( get_the_permalink() ),
-				esc_html__( 'Submit a form.', 'jetpack-forms' )
-			);
-		}
-
-		return Contact_Form::parse( $atts, do_blocks( $content ) );
+		Contact_Form_Block::register_child_blocks();
 	}
 
 	/**
@@ -551,6 +433,19 @@ class Contact_Form_Plugin {
 	}
 
 	/**
+	 * Render the multiple choice field option.
+	 *
+	 * @param array  $atts - the block attributes.
+	 * @param string $content - html content.
+	 *
+	 * @return string HTML for the contact form field.
+	 */
+	public static function gutenblock_render_field_option( $atts, $content ) {
+		$atts = self::block_attributes_to_shortcode_attributes( $atts, 'field-option' );
+		return Contact_Form::parse_contact_field( $atts, $content );
+	}
+
+	/**
 	 * Render the radio button field.
 	 *
 	 * @param array  $atts - the block attributes.
@@ -690,9 +585,9 @@ class Contact_Form_Plugin {
 			check_admin_referer( "contact-form_{$id}" );
 		}
 
-		$is_widget              = 0 === strpos( $id, 'widget-' );
-		$is_block_template      = 0 === strpos( $id, 'block-template-' );
-		$is_block_template_part = 0 === strpos( $id, 'block-template-part-' );
+		$is_widget              = str_starts_with( $id, 'widget-' );
+		$is_block_template      = str_starts_with( $id, 'block-template-' );
+		$is_block_template_part = str_starts_with( $id, 'block-template-part-' );
 
 		$form = false;
 
@@ -717,7 +612,7 @@ class Contact_Form_Plugin {
 				);
 				// This is lamer - no API for outputting a given widget by ID
 				ob_start();
-				// Process the widget to populate Grunion_Contact_Form::$last
+				// Process the widget to populate Contact_Form::$last
 				call_user_func( $widget['callback'], $widget_args, $widget['params'][0] );
 				ob_end_clean();
 			}
@@ -770,15 +665,15 @@ class Contact_Form_Plugin {
 			// end of copy-pasta from wp-includes/template-loader.php.
 
 			// Ensure 'block_template' attribute is added to any shortcodes in the template.
-			$template = grunion_contact_form_set_block_template_attribute( $template );
+			$template = Util::grunion_contact_form_set_block_template_attribute( $template );
 
-			// Process the block template to populate Grunion_Contact_Form::$last
+			// Process the block template to populate Contact_Form::$last
 			get_the_block_template_html();
 		} elseif ( $is_block_template_part ) {
 			$block_template_part_id   = str_replace( 'block-template-part-', '', $id );
 			$bits                     = explode( '//', $block_template_part_id );
 			$block_template_part_slug = array_pop( $bits );
-			// Process the block part template to populate Grunion_Contact_Form::$last
+			// Process the block part template to populate Contact_Form::$last
 			$attributes = array(
 				'theme'   => wp_get_theme()->get_stylesheet(),
 				'slug'    => $block_template_part_slug,
@@ -789,7 +684,7 @@ class Contact_Form_Plugin {
 			// It's a form embedded in a post
 			$post = get_post( $id );
 
-			// Process the content to populate Grunion_Contact_Form::$last
+			// Process the content to populate Contact_Form::$last
 			if ( $post ) {
 				/** This filter is already documented in core. wp-includes/post-template.php */
 				apply_filters( 'the_content', $post->post_content );
@@ -832,12 +727,17 @@ class Contact_Form_Plugin {
 			return $form->errors;
 		}
 
+		if ( ! empty( $form->attributes['salesforceData'] ) || ! empty( $form->attributes['postToUrl'] ) ) {
+			Post_To_Url::init();
+		}
 		// Process the form
 		return $form->process_submission();
 	}
 
 	/**
 	 * Handle the ajax request.
+	 *
+	 * @return never
 	 */
 	public function ajax_request() {
 		$submission_result = self::process_form_submission();
@@ -870,7 +770,7 @@ class Contact_Form_Plugin {
 	 * Ensure the post author is always zero for contact-form feedbacks
 	 * Attached to `wp_insert_post_data`
 	 *
-	 * @see Grunion_Contact_Form::process_submission()
+	 * @see Contact_Form::process_submission()
 	 *
 	 * @param array $data the data to insert.
 	 * @param array $postarr the data sent to wp_insert_post().
@@ -891,6 +791,10 @@ class Contact_Form_Plugin {
 	public function add_shortcode() {
 		add_shortcode( 'contact-form', array( '\Automattic\Jetpack\Forms\ContactForm\Contact_Form', 'parse' ) );
 		add_shortcode( 'contact-field', array( '\Automattic\Jetpack\Forms\ContactForm\Contact_Form', 'parse_contact_field' ) );
+
+		// We need 'contact-field-option' to be registered, so it's included to the get_shortcode_regex() method
+		// But we don't need a callback because we're handling contact-field-option manually
+		add_shortcode( 'contact-field-option', '__return_null' );
 	}
 
 	/**
@@ -1054,11 +958,12 @@ class Contact_Form_Plugin {
 	 * @return array feedback array with additional data ready for submission to Akismet.
 	 */
 	public function prepare_for_akismet( $form ) {
-		$form['comment_type'] = 'contact_form';
-		$form['user_ip']      = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '';
-		$form['user_agent']   = isset( $_SERVER['HTTP_USER_AGENT'] ) ? filter_var( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ) ) : '';
-		$form['referrer']     = isset( $_SERVER['HTTP_REFERER'] ) ? esc_url_raw( wp_unslash( $_SERVER['HTTP_REFERER'] ) ) : '';
-		$form['blog']         = get_option( 'home' );
+		$form['comment_type']     = 'contact_form';
+		$form['user_ip']          = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '';
+		$form['user_agent']       = isset( $_SERVER['HTTP_USER_AGENT'] ) ? filter_var( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ) ) : '';
+		$form['referrer']         = isset( $_SERVER['HTTP_REFERER'] ) ? esc_url_raw( wp_unslash( $_SERVER['HTTP_REFERER'] ) ) : '';
+		$form['blog']             = get_option( 'home' );
+		$form['comment_date_gmt'] = gmdate( DATE_ATOM, time() ); // ISO 8601. See https://www.php.net/manual/en/class.datetimeinterface.php#datetimeinterface.constants.types
 
 		foreach ( $_SERVER as $key => $value ) {
 			if ( ! is_string( $value ) ) {
@@ -1070,7 +975,7 @@ class Contact_Form_Plugin {
 			} elseif ( in_array( $key, array( 'REMOTE_ADDR', 'REQUEST_URI', 'DOCUMENT_URI' ), true ) ) {
 				// All three of these are relevant indicators and should be passed along.
 				$form[ $key ] = $value;
-			} elseif ( substr( $key, 0, 5 ) === 'HTTP_' ) {
+			} elseif ( str_starts_with( $key, 'HTTP_' ) ) {
 				// Any other HTTP header indicators.
 				$form[ $key ] = $value;
 			}
@@ -1090,7 +995,7 @@ class Contact_Form_Plugin {
 
 	/**
 	 * Submit contact-form data to Akismet to check for spam.
-	 * If you're accepting a new item via $_POST, run it Grunion_Contact_Form_Plugin::prepare_for_akismet() first
+	 * If you're accepting a new item via $_POST, run it Contact_Form_Plugin::prepare_for_akismet() first
 	 * Attached to `jetpack_contact_form_is_spam`
 	 *
 	 * @param bool  $is_spam - if the submission is spam.
@@ -1208,24 +1113,29 @@ class Contact_Form_Plugin {
 	/**
 	 * Get `_feedback_extra_fields` field from post meta data.
 	 *
-	 * @param int $post_id Id of the post to fetch meta data for.
+	 * @param int  $post_id Id of the post to fetch meta data for.
+	 * @param bool $has_json_data Whether the post has JSON data or not, defaults to false for backwards compatibility.
 	 *
 	 * @return mixed
 	 */
-	public function get_post_meta_for_csv_export( $post_id ) {
-		$md                     = get_post_meta( $post_id, '_feedback_extra_fields', true );
+	public function get_post_meta_for_csv_export( $post_id, $has_json_data = false ) {
+		$content_fields = self::parse_fields_from_content( $post_id );
+		$all_fields     = isset( $content_fields['_feedback_all_fields'] ) ? $content_fields['_feedback_all_fields'] : array();
+		$md             = $has_json_data
+			? array_diff_key( $all_fields, array_flip( array( 'entry_title', 'email_marketing_consent', 'entry_permalink', 'feedback_id' ) ) )
+			: (array) get_post_meta( $post_id, '_feedback_extra_fields', true );
+
 		$md['-3_response_date'] = get_the_date( 'Y-m-d H:i:s', $post_id );
-		$content_fields         = self::parse_fields_from_content( $post_id );
 		$md['93_ip_address']    = ( isset( $content_fields['_feedback_ip'] ) ) ? $content_fields['_feedback_ip'] : 0;
 
 		// add the email_marketing_consent to the post meta.
 		$md['90_consent'] = 0;
-		if ( isset( $content_fields['_feedback_all_fields'] ) ) {
-			$all_fields = $content_fields['_feedback_all_fields'];
+		if ( ! empty( $all_fields ) ) {
 			// check if the email_marketing_consent field exists.
 			if ( isset( $all_fields['email_marketing_consent'] ) ) {
 				$md['90_consent'] = $all_fields['email_marketing_consent'];
 			}
+
 			// check if the feedback entry has a title.
 			if ( isset( $all_fields['entry_title'] ) ) {
 				$md['-9_title'] = $all_fields['entry_title'];
@@ -1244,7 +1154,16 @@ class Contact_Form_Plugin {
 			}
 		}
 
-		return $md;
+		// flatten and decode all values.
+		$result = array();
+		foreach ( $md as $key => $value ) {
+			if ( is_array( $value ) ) {
+				$value = implode( ', ', $value );
+			}
+			$result[ $key ] = html_entity_decode( $value, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401 );
+		}
+
+		return $result;
 	}
 
 	/**
@@ -1265,12 +1184,15 @@ class Contact_Form_Plugin {
 	 * to names, that are similar to those of the post meta.
 	 *
 	 * @param array $parsed_post_content Parsed post content.
+	 * @param bool  $use_main_comment Whether to use the main comment from the post_content or not.
+	 *                                Defaults to true for backwards compatibility. New JSON format
+	 *                                does not have a main comment and instead has all fields in the parsed content.
 	 *
 	 * @see parse_fields_from_content for how the input data is generated.
 	 *
 	 * @return array Mapped fields.
 	 */
-	public function map_parsed_field_contents_of_post_to_field_names( $parsed_post_content ) {
+	public function map_parsed_field_contents_of_post_to_field_names( $parsed_post_content, $use_main_comment = true ) {
 
 		$mapped_fields = array();
 
@@ -1280,9 +1202,12 @@ class Contact_Form_Plugin {
 			'_feedback_author'       => '1_Name',
 			'_feedback_author_email' => '2_Email',
 			'_feedback_author_url'   => '3_Website',
-			'_feedback_main_comment' => '4_Comment',
 			'_feedback_ip'           => '93_ip_address',
 		);
+
+		if ( $use_main_comment ) {
+			$field_mapping['_feedback_main_comment'] = '4_Comment';
+		}
 
 		foreach ( $field_mapping as $parsed_field_name => $field_name ) {
 			if (
@@ -1445,6 +1370,8 @@ class Contact_Form_Plugin {
 		$post_ids     = $this->personal_data_post_ids_by_email( $email, $per_page, $page, $last_post_id );
 
 		foreach ( $post_ids as $post_id ) {
+			$last_post_id = $post_id;
+
 			/**
 			 * Filters whether to erase a particular Feedback post.
 			 *
@@ -1489,7 +1416,7 @@ class Contact_Form_Plugin {
 		if ( $done ) {
 			delete_option( $option_name );
 		} else {
-			update_option( $option_name, (int) $post_id );
+			update_option( $option_name, (int) $last_post_id );
 		}
 
 		return array(
@@ -1558,7 +1485,7 @@ class Contact_Form_Plugin {
 		 * Limits search to `post_content` only, and we only match the
 		 * author's email address whenever it's on a line by itself.
 		 */
-		if ( $this->pde_email_address && false !== strpos( $search, '..PDE..AUTHOR EMAIL:..PDE..' ) ) {
+		if ( $this->pde_email_address && str_contains( $search, '..PDE..AUTHOR EMAIL:..PDE..' ) ) {
 			$search = $wpdb->prepare(
 				" AND (
 					{$wpdb->posts}.post_content LIKE %s
@@ -1601,6 +1528,12 @@ class Contact_Form_Plugin {
 			$post_real_data = $this->get_parsed_field_contents_of_post( $post_id );
 
 			/**
+			 * Whether the feedback post has JSON data or not.
+			 * This is used as optional parameter on legacy functions.
+			 */
+			$post_has_json_data = $this->has_json_data( $post_id );
+
+			/**
 			 * If `$post_real_data` is not an array or there is no `_feedback_subject` set,
 			 * then something must be wrong with the feedback post. Skip it.
 			 */
@@ -1620,12 +1553,12 @@ class Contact_Form_Plugin {
 			/**
 			 * Map parsed fields to proper field names
 			 */
-			$mapped_fields = $this->map_parsed_field_contents_of_post_to_field_names( $post_real_data );
+			$mapped_fields = $this->map_parsed_field_contents_of_post_to_field_names( $post_real_data, ! $post_has_json_data );
 
 			/**
 			 * Fetch post meta data.
 			 */
-			$post_meta_data = $this->get_post_meta_for_csv_export( $post_id );
+			$post_meta_data = $this->get_post_meta_for_csv_export( $post_id, $post_has_json_data );
 
 			/**
 			 * If `$post_meta_data` is not an array or if it is empty, then there is no
@@ -1747,7 +1680,7 @@ class Contact_Form_Plugin {
 		$args = array(
 			'posts_per_page'   => -1,
 			'post_type'        => 'feedback',
-			'post_status'      => 'publish',
+			'post_status'      => array( 'publish', 'draft' ),
 			'order'            => 'ASC',
 			'fields'           => 'ids',
 			'suppress_filters' => false,
@@ -1757,6 +1690,14 @@ class Contact_Form_Plugin {
 		// Check if we want to download all the feedbacks or just a certain contact form
 		if ( ! empty( $_POST['post'] ) && $_POST['post'] !== 'all' ) {
 			$args['post_parent'] = (int) $_POST['post'];
+		}
+
+		if ( ! empty( $_POST['status'] ) && in_array( $_POST['status'], array( 'spam', 'trash' ), true ) ) {
+			$args['post_status'] = sanitize_text_field( wp_unslash( $_POST['status'] ) );
+		}
+
+		if ( ! empty( $_POST['search'] ) ) {
+			$args['s'] = sanitize_text_field( wp_unslash( $_POST['search'] ) );
 		}
 
 		if ( ! empty( $_POST['year'] ) && intval( $_POST['year'] ) > 0 ) {
@@ -1870,7 +1811,82 @@ class Contact_Form_Plugin {
 		}
 
 		fclose( $output ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
+
+		$this->record_tracks_event( 'forms_export_responses', array( 'format' => 'csv' ) );
 		exit();
+	}
+
+	/**
+	 * Create a new post with a Form block
+	 */
+	public function create_new_form() {
+		$post_id = wp_insert_post(
+			array(
+				'post_title'   => esc_html__( 'Jetpack Forms', 'jetpack-forms' ),
+				'post_content' => '
+					<!-- wp:jetpack/contact-form -->
+					<div class="wp-block-jetpack-contact-form"></div>
+					<!-- /wp:jetpack/contact-form -->
+				',
+			)
+		);
+
+		if ( ! is_wp_error( $post_id ) ) {
+			$array_result = array(
+				'post_url' => admin_url( 'post.php?post=' . intval( $post_id ) . '&action=edit' ),
+			);
+
+			wp_send_json( $array_result );
+		}
+
+		wp_die();
+	}
+
+	/**
+	 * Send an event to Tracks
+	 *
+	 * @param string $event_name - the name of the event.
+	 * @param array  $event_props - event properties to send.
+	 *
+	 * @return null|void
+	 */
+	public function record_tracks_event( $event_name, $event_props ) {
+		/*
+		 * Event details.
+		 */
+		$event_user = wp_get_current_user();
+
+		/*
+		 * Record event.
+		 * We use different libs on wpcom and Jetpack.
+		 */
+		if ( defined( 'IS_WPCOM' ) && IS_WPCOM ) {
+			$event_name             = 'wpcom_' . $event_name;
+			$event_props['blog_id'] = get_current_blog_id();
+			// logged out visitor, record event with blog owner.
+			if ( empty( $event_user->ID ) ) {
+				$event_user_id = wpcom_get_blog_owner( $event_props['blog_id'] );
+				$event_user    = get_userdata( $event_user_id );
+			}
+
+			require_lib( 'tracks/client' );
+			tracks_record_event( $event_user, $event_name, $event_props );
+		} else {
+			$user_connected = ( new \Automattic\Jetpack\Connection\Manager( 'jetpack-forms' ) )->is_user_connected( get_current_user_id() );
+			if ( ! $user_connected ) {
+				return;
+			}
+			// logged out visitor, record event with Jetpack master user.
+			if ( empty( $event_user->ID ) ) {
+				$master_user_id = Jetpack_Options::get_option( 'master_user' );
+				if ( ! empty( $master_user_id ) ) {
+					$event_user = get_userdata( $master_user_id );
+				}
+			}
+
+			$tracking = new \Automattic\Jetpack\Tracking();
+			$tracking->record_user_event( $event_name, $event_props, $event_user );
+		}
 	}
 
 	/**
@@ -1898,25 +1914,36 @@ class Contact_Form_Plugin {
 	}
 
 	/**
+	 * Returns an array of parent post IDs for the user.
+	 * The parent posts are those posts where forms have been published.
+	 *
+	 * @param array $query_args A WP_Query compatible array of query args.
+	 *
+	 * @return array The array of post IDs
+	 */
+	public static function get_all_parent_post_ids( $query_args = array() ) {
+		$default_query_args = array(
+			'fields'           => 'id=>parent',
+			'posts_per_page'   => 100000, // phpcs:ignore WordPress.WP.PostsPerPage.posts_per_page_posts_per_page
+			'post_type'        => 'feedback',
+			'post_status'      => 'publish',
+			'suppress_filters' => false,
+		);
+		$args               = array_merge( $default_query_args, $query_args );
+		// Get the feedbacks' parents' post IDs
+		$feedbacks = get_posts( $args );
+		return array_values( array_unique( array_values( $feedbacks ) ) );
+	}
+
+	/**
 	 * Returns a string of HTML <option> items from an array of posts
 	 *
 	 * @param int $selected_id Currently selected post ID.
 	 * @return string a string of HTML <option> items
 	 */
 	protected static function get_feedbacks_as_options( $selected_id = 0 ) {
-		$options = '';
-
-		// Get the feedbacks' parents' post IDs
-		$feedbacks  = get_posts(
-			array(
-				'fields'           => 'id=>parent',
-				'posts_per_page'   => 100000, // phpcs:ignore WordPress.WP.PostsPerPage.posts_per_page_posts_per_page
-				'post_type'        => 'feedback',
-				'post_status'      => 'publish',
-				'suppress_filters' => false,
-			)
-		);
-		$parent_ids = array_unique( array_values( $feedbacks ) );
+		$options    = '';
+		$parent_ids = self::get_all_parent_post_ids();
 
 		// creates the string of <option> elements
 		foreach ( $parent_ids as $parent_id ) {
@@ -1962,6 +1989,22 @@ class Contact_Form_Plugin {
 	}
 
 	/**
+	 * Returns if the feedback post has JSON data
+	 *
+	 * @param int $post_id The feedback post ID to check.
+	 * @return bool
+	 */
+	public function has_json_data( $post_id ) {
+		$post_content = get_post_field( 'post_content', $post_id );
+		$content      = explode( "\nJSON_DATA", $post_content );
+		if ( empty( $content[1] ) ) {
+			return false;
+		}
+		$json_data = json_decode( $content[1], true );
+		return is_array( $json_data ) && ! empty( $json_data );
+	}
+
+	/**
 	 * Parse the contact form fields.
 	 *
 	 * @param int $post_id - the post ID.
@@ -1984,17 +2027,26 @@ class Contact_Form_Plugin {
 		$lines        = array();
 
 		if ( count( $content ) > 1 ) {
-			$content      = str_ireplace( array( '<br />', ')</p>' ), '', $content[1] );
-			$fields_array = preg_replace( '/.*Array\s\( (.*)\)/msx', '$1', $content );
+			$content = str_ireplace( array( '<br />', ')</p>' ), '', $content[1] );
+			if ( str_contains( $content, 'JSON_DATA' ) ) {
+				$chunks     = explode( "\nJSON_DATA", $content );
+				$all_values = json_decode( $chunks[1], true );
+				if ( is_array( $all_values ) ) {
+					$fields_array = array_keys( $all_values );
+				}
+				$lines = array_filter( explode( "\n", $chunks[0] ) );
+			} else {
+				$fields_array = preg_replace( '/.*Array\s\( (.*)\)/msx', '$1', $content );
 
-			// TODO: some explanation on this regex could help
-			preg_match_all( '/^\s*\[([^\]]+)\] =\&gt\; (.*)(?=^\s*(\[[^\]]+\] =\&gt\;)|\z)/msU', $fields_array, $matches );
+				// TODO: some explanation on this regex could help
+				preg_match_all( '/^\s*\[([^\]]+)\] =\&gt\; (.*)(?=^\s*(\[[^\]]+\] =\&gt\;)|\z)/msU', $fields_array, $matches );
 
-			if ( count( $matches ) > 1 ) {
-				$all_values = array_combine( array_map( 'trim', $matches[1] ), array_map( 'trim', $matches[2] ) );
+				if ( count( $matches ) > 1 ) {
+					$all_values = array_combine( array_map( 'trim', $matches[1] ), array_map( 'trim', $matches[2] ) );
+				}
+
+				$lines = array_filter( explode( "\n", $content ) );
 			}
-
-			$lines = array_filter( explode( "\n", $content ) );
 		}
 
 		$var_map = array(
@@ -2017,7 +2069,6 @@ class Contact_Form_Plugin {
 		}
 
 		$fields['_feedback_all_fields'] = $all_values;
-		$fields['all_fields']           = $all_values;
 
 		$post_fields[ $post_id ] = $fields;
 
@@ -2159,5 +2210,24 @@ class Contact_Form_Plugin {
 
 			return $ret;
 		}
+	}
+
+	/**
+	 * Method untrash_feedback_status_handler
+	 * wp_untrash_post filter handler.
+	 *
+	 * @param string $current_status   The status to be set.
+	 * @param int    $post_id          The post ID.
+	 * @param string $previous_status  The previous status.
+	 */
+	public function untrash_feedback_status_handler( $current_status, $post_id, $previous_status ) {
+		$post = get_post( $post_id );
+		if ( 'feedback' === $post->post_type ) {
+			if ( in_array( $previous_status, array( 'spam', 'publish' ), true ) ) {
+				return $previous_status;
+			}
+			return 'publish';
+		}
+		return $current_status;
 	}
 }

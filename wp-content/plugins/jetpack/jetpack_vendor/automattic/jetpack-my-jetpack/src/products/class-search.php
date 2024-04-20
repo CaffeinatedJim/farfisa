@@ -9,7 +9,7 @@ namespace Automattic\Jetpack\My_Jetpack\Products;
 
 use Automattic\Jetpack\Connection\Client;
 use Automattic\Jetpack\Constants;
-use Automattic\Jetpack\My_Jetpack\Product;
+use Automattic\Jetpack\My_Jetpack\Hybrid_Product;
 use Automattic\Jetpack\My_Jetpack\Wpcom_Products;
 use Automattic\Jetpack\Search\Module_Control as Search_Module_Control;
 use Jetpack_Options;
@@ -18,7 +18,7 @@ use WP_Error;
 /**
  * Class responsible for handling the Search product
  */
-class Search extends Product {
+class Search extends Hybrid_Product {
 	/**
 	 * The product slug
 	 *
@@ -41,6 +41,13 @@ class Search extends Product {
 	public static $plugin_slug = 'jetpack-search';
 
 	/**
+	 * Search has a standalone plugin
+	 *
+	 * @var bool
+	 */
+	public static $has_standalone_plugin = true;
+
+	/**
 	 * The filename (id) of the plugin associated with this product.
 	 *
 	 * @var string
@@ -59,21 +66,21 @@ class Search extends Product {
 	public static $requires_user_connection = false;
 
 	/**
-	 * Get the internationalized product name
+	 * Get the product name
 	 *
 	 * @return string
 	 */
 	public static function get_name() {
-		return __( 'Search', 'jetpack-my-jetpack' );
+		return 'Search';
 	}
 
 	/**
-	 * Get the internationalized product title
+	 * Get the product title
 	 *
 	 * @return string
 	 */
 	public static function get_title() {
-		return __( 'Jetpack Search', 'jetpack-my-jetpack' );
+		return 'Jetpack Search';
 	}
 
 	/**
@@ -82,7 +89,7 @@ class Search extends Product {
 	 * @return string
 	 */
 	public static function get_description() {
-		return __( 'Help them find what they need', 'jetpack-my-jetpack' );
+		return __( 'Custom instant site search', 'jetpack-my-jetpack' );
 	}
 
 	/**
@@ -135,6 +142,15 @@ class Search extends Product {
 		$pricing['estimated_record_count'] = $record_count;
 
 		return array_merge( $pricing, $search_pricing );
+	}
+
+	/**
+	 * Get the URL the user is taken after purchasing the product through the checkout
+	 *
+	 * @return ?string
+	 */
+	public static function get_post_checkout_url() {
+		return self::get_manage_url();
 	}
 
 	/**
@@ -320,5 +336,4 @@ class Search extends Product {
 	public static function get_manage_url() {
 		return admin_url( 'admin.php?page=jetpack-search' );
 	}
-
 }

@@ -3,6 +3,7 @@
  * Comment endpoint.
  *
  * @todo - can this file be written without overriding global variables?
+ *
  * @phpcs:disable WordPress.WP.GlobalVariablesOverride.Prohibited
  */
 /**
@@ -239,4 +240,3 @@ abstract class WPCOM_JSON_API_Comment_Endpoint extends WPCOM_JSON_API_Endpoint {
 		return $response;
 	}
 }
-

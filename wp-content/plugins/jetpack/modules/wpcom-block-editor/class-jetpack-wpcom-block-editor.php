@@ -201,6 +201,8 @@ class Jetpack_WPCOM_Block_Editor {
 
 	/**
 	 * Does the redirect to the block editor.
+	 *
+	 * @return never
 	 */
 	public function do_redirect() {
 		wp_safe_redirect( $GLOBALS['redirect_to'] );
@@ -363,6 +365,14 @@ class Jetpack_WPCOM_Block_Editor {
 				$version,
 				true
 			);
+			wp_enqueue_style(
+				'wpcom-block-editor-wpcom-editor-styles',
+				$debug
+					? '//widgets.wp.com/wpcom-block-editor/wpcom.editor.css?minify=false'
+					: '//widgets.wp.com/wpcom-block-editor/wpcom.editor.min.css',
+				array(),
+				$version
+			);
 		}
 
 		if ( $this->is_iframed_block_editor() ) {
@@ -421,7 +431,7 @@ class Jetpack_WPCOM_Block_Editor {
 			return false;
 		}
 
-		return false !== strpos( $post->post_content, '<!-- wp:paragraph {"align":"justify"' );
+		return str_contains( $post->post_content, '<!-- wp:paragraph {"align":"justify"' );
 	}
 
 	/**

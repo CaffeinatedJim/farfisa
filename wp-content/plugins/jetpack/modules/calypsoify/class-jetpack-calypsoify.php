@@ -68,7 +68,7 @@ class Jetpack_Calypsoify {
 		wp_style_add_data( 'calypsoify_wpadminmods_css', 'rtl', 'replace' );
 		wp_style_add_data( 'calypsoify_wpadminmods_css', 'suffix', '.min' );
 
-		wp_enqueue_script( 'calypsoify_wpadminmods_js', plugin_dir_url( __FILE__ ) . 'mods-gutenberg.js', false, JETPACK__VERSION, false );
+		wp_enqueue_script( 'calypsoify_wpadminmods_js', plugin_dir_url( __FILE__ ) . 'mods-gutenberg.js', array( 'jquery' ), JETPACK__VERSION, false );
 		wp_localize_script(
 			'calypsoify_wpadminmods_js',
 			'calypsoifyGutenberg',
@@ -180,22 +180,22 @@ class Jetpack_Calypsoify {
 		// Disabling WordPress.Security.NonceVerification.Recommended because this function fires within admin_init and this is only changing display.
 		$page = isset( $_SERVER['REQUEST_URI'] ) ? wp_basename( esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) ) ) : '';
 
-		if ( false !== strpos( $page, 'post-new.php' ) && empty( $_GET['post_type'] ) ) {
+		if ( str_contains( $page, 'post-new.php' ) && empty( $_GET['post_type'] ) ) {
 			return true;
 		}
 
-		if ( false !== strpos( $page, 'post-new.php' ) && isset( $_GET['post_type'] ) && $this->is_post_type_gutenberg( sanitize_key( $_GET['post_type'] ) ) ) {
+		if ( str_contains( $page, 'post-new.php' ) && isset( $_GET['post_type'] ) && $this->is_post_type_gutenberg( sanitize_key( $_GET['post_type'] ) ) ) {
 			return true;
 		}
 
-		if ( false !== strpos( $page, 'post.php' ) ) {
+		if ( str_contains( $page, 'post.php' ) ) {
 			$post = get_post( isset( $_GET['post'] ) ? intval( $_GET['post'] ) : null );
 			if ( isset( $post ) && isset( $post->post_type ) && $this->is_post_type_gutenberg( $post->post_type ) ) {
 				return true;
 			}
 		}
 
-		if ( false !== strpos( $page, 'revision.php' ) ) {
+		if ( str_contains( $page, 'revision.php' ) ) {
 			$post   = get_post( isset( $_GET['revision'] ) ? intval( $_GET['revision'] ) : null );
 			$parent = get_post( $post->post_parent );
 			if ( isset( $parent ) && isset( $parent->post_type ) && $this->is_post_type_gutenberg( $parent->post_type ) ) {
@@ -206,7 +206,6 @@ class Jetpack_Calypsoify {
 		return false;
 		// phpcs:enable
 	}
-
 }
 
 Jetpack_Calypsoify::get_instance();

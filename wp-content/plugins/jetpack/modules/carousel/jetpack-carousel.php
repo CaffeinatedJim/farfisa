@@ -83,6 +83,9 @@ class Jetpack_Carousel {
 		$this->single_image_gallery_enabled            = ! $this->maybe_disable_jp_carousel_single_images();
 		$this->single_image_gallery_enabled_media_file = $this->maybe_enable_jp_carousel_single_images_media_file();
 
+		// Disable core lightbox when Carousel is enabled.
+		add_action( 'wp_theme_json_data_theme', array( $this, 'disable_core_lightbox' ) );
+
 		if ( is_admin() ) {
 			// Register the Carousel-related related settings.
 			add_action( 'admin_init', array( $this, 'register_settings' ), 5 );
@@ -123,17 +126,25 @@ class Jetpack_Carousel {
 				add_filter( 'the_content', array( $this, 'add_data_img_tags_and_enqueue_assets' ) );
 			}
 
-			if (
-				! class_exists( 'Jetpack_AMP_Support' )
-				|| ! Jetpack_AMP_Support::is_amp_request()
-			) {
-				add_filter( 'render_block_core/gallery', array( $this, 'filter_gallery_block_render' ), 10, 2 );
-				add_filter( 'render_block_jetpack/tiled-gallery', array( $this, 'filter_gallery_block_render' ), 10, 2 );
-			}
+			// `is_amp_request()` can't be called until the 'wp' filter.
+			add_action( 'wp', array( $this, 'check_amp_support' ) );
 		}
 
 		if ( $this->in_jetpack ) {
 			Jetpack::enable_module_configurable( dirname( __DIR__ ) . '/carousel.php' );
+		}
+	}
+
+	/**
+	 * Check AMP and add filters.
+	 */
+	public function check_amp_support() {
+		if (
+			! class_exists( 'Jetpack_AMP_Support' )
+			|| ! Jetpack_AMP_Support::is_amp_request()
+		) {
+			add_filter( 'render_block_core/gallery', array( $this, 'filter_gallery_block_render' ), 10, 2 );
+			add_filter( 'render_block_jetpack/tiled-gallery', array( $this, 'filter_gallery_block_render' ), 10, 2 );
 		}
 	}
 
@@ -196,6 +207,32 @@ class Jetpack_Carousel {
 		 * @param bool false Should Carousel be enabled for single images linking to 'Media File'? Default to false.
 		 */
 		return apply_filters( 'jp_carousel_load_for_images_linked_to_file', false );
+	}
+
+	/**
+	 * Disable the "Lightbox" option offered in WordPress core
+	 * whenever Jetpack's Carousel feature is enabled.
+	 *
+	 * @since 13.3
+	 *
+	 * @param WP_Theme_JSON_Data $theme_json Class to access and update theme.json data.
+	 */
+	public function disable_core_lightbox( $theme_json ) {
+		return $theme_json->update_with(
+			array(
+				'version'  => 2,
+				'settings' => array(
+					'blocks' => array(
+						'core/image' => array(
+							'lightbox' => array(
+								'allowEditing' => false,
+								'enabled'      => false,
+							),
+						),
+					),
+				),
+			)
+		);
 	}
 
 	/**
@@ -724,7 +761,7 @@ class Jetpack_Carousel {
 								<div class="jp-carousel-photo-description"></div>
 							</div>
 							<ul class="jp-carousel-image-exif" style="display: none;"></ul>
-							<a class="jp-carousel-image-download" target="_blank" style="display: none;">
+							<a class="jp-carousel-image-download" href="#" target="_blank" style="display: none;">
 								<svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 									<mask id="mask0" mask-type="alpha" maskUnits="userSpaceOnUse" x="3" y="3" width="19" height="18">
 										<path fill-rule="evenodd" clip-rule="evenodd" d="M5.84615 5V19H19.7775V12H21.7677V19C21.7677 20.1 20.8721 21 19.7775 21H5.84615C4.74159 21 3.85596 20.1 3.85596 19V5C3.85596 3.9 4.74159 3 5.84615 3H12.8118V5H5.84615ZM14.802 5V3H21.7677V10H19.7775V6.41L9.99569 16.24L8.59261 14.83L18.3744 5H14.802Z" fill="white"/>
@@ -789,9 +826,28 @@ class Jetpack_Carousel {
 		}
 		$selected_images = array();
 		foreach ( $matches[0] as $image_html ) {
-			if ( preg_match( '/(wp-image-|data-id=)\"?([0-9]+)\"?/i', $image_html, $class_id ) &&
-				! preg_match( '/wp-block-jetpack-slideshow_image/', $image_html ) ) {
-				$attachment_id = absint( $class_id[2] );
+			if (
+				preg_match( '/(wp-image-|data-id=)\"?([0-9]+)\"?/i', $image_html, $class_id )
+				&& ! preg_match( '/wp-block-jetpack-slideshow_image/', $image_html )
+			) {
+				/**
+				 * Allow filtering the attachment ID used to fetch and populate metadata about an image in a gallery.
+				 *
+				 * @module carousel
+				 *
+				 * @since 12.6
+				 *
+				 * @param int    $attachment_id Attachment ID pulled from image HTML.
+				 * @param string $image_html    Full HTML image tag.
+				 */
+				$attachment_id = absint(
+					apply_filters(
+						'jetpack_carousel_image_attachment_id',
+						$class_id[2],
+						$image_html
+					)
+				);
+
 				/**
 				 * The same image tag may be used more than once but with different attribs,
 				 * so save each of them against the attachment id.
@@ -1144,6 +1200,8 @@ class Jetpack_Carousel {
 
 	/**
 	 * Adds a new comment to the database
+	 *
+	 * @return never
 	 */
 	public function post_attachment_comment() {
 		if ( ! headers_sent() ) {

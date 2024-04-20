@@ -5,6 +5,32 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.3] - 2024-03-25
+### Changed
+- Internal updates.
+
+## [2.0.2] - 2024-03-14
+### Changed
+- Internal updates.
+
+## [2.0.1] - 2023-11-21
+
+## [2.0.0] - 2023-11-20
+### Changed
+- Updated required PHP version to >= 7.0. [#34192]
+
+## [1.8.4] - 2023-09-19
+
+- Minor internal updates.
+
+## [1.8.3] - 2023-08-23
+### Changed
+- Updated package dependencies. [#32605]
+
+## [1.8.2] - 2023-04-10
+### Added
+- Add Jetpack Autoloader package suggestion. [#29988]
+
 ## [1.8.1] - 2023-02-20
 ### Changed
 - Minor internal updates.
@@ -238,6 +264,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Licensing: Add support for Jetpack licenses
 
+[2.0.3]: https://github.com/Automattic/jetpack-licensing/compare/v2.0.2...v2.0.3
+[2.0.2]: https://github.com/Automattic/jetpack-licensing/compare/v2.0.1...v2.0.2
+[2.0.1]: https://github.com/Automattic/jetpack-licensing/compare/v2.0.0...v2.0.1
+[2.0.0]: https://github.com/Automattic/jetpack-licensing/compare/v1.8.4...v2.0.0
+[1.8.4]: https://github.com/Automattic/jetpack-licensing/compare/v1.8.3...v1.8.4
+[1.8.3]: https://github.com/Automattic/jetpack-licensing/compare/v1.8.2...v1.8.3
+[1.8.2]: https://github.com/Automattic/jetpack-licensing/compare/v1.8.1...v1.8.2
 [1.8.1]: https://github.com/Automattic/jetpack-licensing/compare/v1.8.0...v1.8.1
 [1.8.0]: https://github.com/Automattic/jetpack-licensing/compare/v1.7.14...v1.8.0
 [1.7.14]: https://github.com/Automattic/jetpack-licensing/compare/v1.7.13...v1.7.14

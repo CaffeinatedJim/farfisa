@@ -174,7 +174,7 @@ class WPCOM_REST_API_V2_Endpoint_External_Media extends WP_REST_Controller {
 	 * Checks if a given request has access to external media libraries.
 	 */
 	public function permission_callback() {
-		return current_user_can( 'edit_posts' );
+		return current_user_can( 'upload_files' );
 	}
 
 	/**
@@ -394,7 +394,7 @@ class WPCOM_REST_API_V2_Endpoint_External_Media extends WP_REST_Controller {
 		$wpcom_path = sprintf( '/meta/external-media/connection/%s', $service );
 
 		if ( defined( 'IS_WPCOM' ) && IS_WPCOM ) {
-			$internal_request = new WP_REST_Request( Requests::DELETE, '/' . $this->namespace . $wpcom_path );
+			$internal_request = new WP_REST_Request( 'DELETE', '/' . $this->namespace . $wpcom_path );
 			$internal_request->set_query_params( $request->get_params() );
 
 			return rest_do_request( $internal_request );
@@ -404,7 +404,7 @@ class WPCOM_REST_API_V2_Endpoint_External_Media extends WP_REST_Controller {
 			$wpcom_path,
 			'2',
 			array(
-				'method' => Requests::DELETE,
+				'method' => 'DELETE',
 			)
 		);
 

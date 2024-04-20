@@ -8,8 +8,8 @@
 namespace Automattic\Jetpack\Forms\ContactForm;
 
 /**
- * Class Grunion_Contact_Form_Endpoint
- * Used as 'rest_controller_class' parameter when 'feedback' post type is registered in modules/contact-form/grunion-contact-form.php.
+ * Class Contact_Form_Endpoint
+ * Used as 'rest_controller_class' parameter when 'feedback' post type is registered in \Automattic\Jetpack\Forms\ContactForm\Contact_Form.
  */
 class Contact_Form_Endpoint extends \WP_REST_Posts_Controller {
 	/**
@@ -47,5 +47,4 @@ class Contact_Form_Endpoint extends \WP_REST_Posts_Controller {
 
 		return true;
 	}
-
 }
