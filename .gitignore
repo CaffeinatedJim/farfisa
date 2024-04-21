@@ -8,3 +8,4 @@ wp-content/updraft/*
 *.sql
 *.sql.zip
 *.rnd
+error_log
