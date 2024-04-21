@@ -17,7 +17,7 @@
         wp_link_pages(array(
             'before' => '<div class="page-links">' . __('Pages:', 'bootstrap-basic') . ' <ul class="pagination">',
             'after'  => '</ul></div>',
-            'separator' => ''
+            'separator' => '',
         ));
         ?> 
     </div><!-- .entry-content -->
@@ -26,7 +26,7 @@
         <?php 
         if (is_single()) {
             ?> 
-            <?php if ('post' == get_post_type()) { // Hide category and tag text for pages on Search ?> 
+            <?php if ('post' === get_post_type()) { // Hide category and tag text for pages on Search ?> 
             <div class="entry-meta-category-tag">
                 <?php
                     /* translators: used between list items, there is a space after the comma */
@@ -51,7 +51,7 @@
             <?php } // End if 'post' == get_post_type() ?> 
 
             <div class="entry-meta-comment-tools">
-                <?php if (! post_password_required() && (comments_open() || '0' != get_comments_number())) { ?> 
+                <?php if (! post_password_required() && (comments_open() || '0' !== strval(get_comments_number()))) { ?> 
                 <span class="comments-link"><?php bootstrapBasicCommentsPopupLink(); ?></span>
                 <?php } //endif; ?> 
 

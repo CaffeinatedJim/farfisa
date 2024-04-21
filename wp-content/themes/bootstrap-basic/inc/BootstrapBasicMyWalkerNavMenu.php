@@ -42,7 +42,7 @@ if (!class_exists('BootstrapBasicMyWalkerNavMenu')) {
             $id = $element->$id_field;
 
             // descend only when the depth is right and there are childrens for this element
-            if ((0 == $max_depth || $max_depth > $depth + 1) && isset($children_elements[$id])) {
+            if ((0 === intval($max_depth) || $max_depth > $depth + 1) && isset($children_elements[$id])) {
 
                 foreach ($children_elements[$id] as $child) {
 
@@ -76,7 +76,7 @@ if (!class_exists('BootstrapBasicMyWalkerNavMenu')) {
          */
         public function start_el(&$output, $item, $depth = 0, $args = array(), $id = 0) 
         {
-            if ((is_object($item) && null == $item->title) || (!is_object($item))) {
+            if ((is_object($item) && empty($item->title)) || (!is_object($item))) {
                 return ;
             }
             if (!is_numeric($depth)) {
@@ -96,6 +96,9 @@ if (!class_exists('BootstrapBasicMyWalkerNavMenu')) {
                 // $classes[] = 'dropdown';
                 $li_attributes .= ' data-dropdown="dropdown"';
             }
+            if (isset($classes) && in_array('divider', $classes)) {
+                $li_attributes .= ' role="separator"';
+            }
             $classes[] = 'menu-item-' . $item->ID;
             // If we are on the current page, add the active class to that menu item.
             $classes[] = ($item->current) ? 'active' : '';
@@ -112,10 +115,15 @@ if (!class_exists('BootstrapBasicMyWalkerNavMenu')) {
 
             $output .= $indent . '<li' . $id . $value . $class_names . $li_attributes . '>';
 
-            if (isset($item->classes) && is_array($item->classes) && in_array('divider', $item->classes)) {
-                // it is Bootstrap dropdown divider, use this instead of link.
+            if (isset($classes) && in_array('divider', $classes)) {
+                // if it is Bootstrap dropdown divider, use this instead of link.
                 $item_output = (is_object($args)) ? $args->before : '';
-                $item_output .= '<div class="' . join(' ', $item->classes) . '"></div>'.PHP_EOL;
+                // no need to set link item content. refer to Bootstrap 3 document, it has just `<li role="separator" class="divider"></li>`.
+                $item_output .= (is_object($args) ? $args->after : '');
+            } elseif (isset($classes) && in_array('dropdown-header', $classes)) {
+                // if it is Bootstrap dropdown header, use this instead of link.
+                $item_output = (is_object($args)) ? $args->before : '';
+                $item_output .= $item->title;
                 $item_output .= (is_object($args) ? $args->after : '');
             } else {
                 // Add attributes to link element.
@@ -132,6 +140,9 @@ if (!class_exists('BootstrapBasicMyWalkerNavMenu')) {
                 $item_output .= '</a>';
                 $item_output .= (is_object($args) ? $args->after : '');
             }
+
+            // cleanup.
+            unset($class_names, $classes, $li_attributes);
 
             $output .= apply_filters('walker_nav_menu_start_el', $item_output, $item, $depth, $args);
         }// start_el
